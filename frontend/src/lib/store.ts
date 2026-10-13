@@ -7,6 +7,7 @@ import type {
   Format,
   OptionDraft,
   Concept,
+  ProductData,
 } from "@/lib/types";
 import {
   MOCK_PRODUCT,
@@ -49,22 +50,74 @@ export const useSessionStore = create<SessionFlowState>()((set, get) => ({
     set({ isFetching: true, fetchError: null });
 
     try {
-      // Simulate network delay
-      await sleep(1800);
+      let resolvedProduct: ProductData | null = null;
 
-      // In production: call POST /products/resolve
-      // const response = await fetch('/api/products/resolve', {
-      //   method: 'POST',
-      //   body: JSON.stringify({ sellerId: inputForm.sellerId, link: inputForm.productLink }),
-      // });
+      try {
+        const response = await fetch("/api/products/resolve", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sellerId: inputForm.sellerId,
+            productLink: inputForm.productLink,
+            format: inputForm.format,
+          }),
+        });
 
-      const mockSession: Session = {
+        if (response.ok) {
+          const data = await response.json();
+          const marginPercent =
+            data.sp && data.cp && data.sp > 0
+              ? Math.round(((data.sp - data.cp) / data.sp) * 1000) / 10
+              : undefined;
+
+          resolvedProduct = {
+            sellerId: data.seller_id || inputForm.sellerId,
+            productLink: inputForm.productLink,
+            productId: data.product_id || "PROD-001",
+            title: data.title || "ShopDeck Product",
+            description: data.description || "",
+            category: data.category || "General",
+            sp: Number(data.sp) || 0,
+            mrp: Number(data.mrp) || Number(data.sp) || 0,
+            cp: data.cp ? Number(data.cp) : undefined,
+            discountPercent: Number(data.discount_percent) || 0,
+            marginPercent,
+            images: Array.isArray(data.images) ? data.images : [],
+            referenceImages: Array.isArray(data.images)
+              ? data.images.map((img: { url: string }) => img.url)
+              : [],
+            variant: data.variant || undefined,
+            isInStock: Boolean(data.is_in_stock ?? true),
+            isPublished: Boolean(data.is_published ?? true),
+            fieldSources: data.field_sources || {
+              title: "database",
+              sp: "database",
+              mrp: "database",
+              category: "database",
+            },
+            fetchedAt: data.fetched_at || new Date().toISOString(),
+          };
+        }
+      } catch (apiErr) {
+        console.warn("Could not reach /api/products/resolve, falling back to mock:", apiErr);
+      }
+
+      if (!resolvedProduct) {
+        // Fallback for development if URL is not in Metabase
+        resolvedProduct = {
+          ...MOCK_PRODUCT,
+          sellerId: inputForm.sellerId,
+          productLink: inputForm.productLink,
+        };
+      }
+
+      const session: Session = {
         id: `sess-${Date.now()}`,
         userId: "current-user",
-        sellerId: inputForm.sellerId,
+        sellerId: resolvedProduct.sellerId,
         format: inputForm.format,
         status: "confirming",
-        product: { ...MOCK_PRODUCT, sellerId: inputForm.sellerId },
+        product: resolvedProduct,
         selectedTemplateIds: [],
         options: [],
         concepts: [],
@@ -72,7 +125,7 @@ export const useSessionStore = create<SessionFlowState>()((set, get) => ({
         updatedAt: new Date().toISOString(),
       };
 
-      set({ session: mockSession, isFetching: false, currentStep: 1 });
+      set({ session, isFetching: false, currentStep: 1 });
     } catch (err) {
       set({
         isFetching: false,

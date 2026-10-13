@@ -12,32 +12,80 @@ from config import settings
 from datetime import datetime
 import structlog
 
+from services.metabase_service import MetabaseService
+
 log = structlog.get_logger()
 
 
 class ProductResolverService:
     """
-    The only piece that depends on ShopDeck systems.
-    Behind an interface so the source (API / DB / Metabase) can change.
+    Resolves product data from ShopDeck sources.
+    Uses live Metabase public data as the primary catalog source.
     """
+
+    def __init__(self):
+        self.metabase = MetabaseService.get_instance()
 
     async def resolve(self, seller_id: str, product_link: str) -> ProductResponse:
         """
         1. Normalise and clean the URL
-        2. Extract product identifier and variant
-        3. Lookup in ShopDeck DB
-        4. Verify seller ownership
-        5. Check stock and publish status
-        6. Return product WITHOUT CP
+        2. Look up in live Metabase catalog
+        3. If not found, try ShopDeck API / fallback
         """
         normalized_url, product_id, variant = self._normalize_link(product_link)
 
-        # Try primary: ShopDeck internal API (source of truth)
+        # 1. Primary: Metabase live catalog lookup
+        try:
+            mb_product = await self.metabase.find_product(product_link, seller_id=seller_id)
+            if mb_product:
+                log.info(
+                    "Product resolved from Metabase",
+                    product_id=mb_product["product_id"],
+                    seller_id=mb_product["seller_id"],
+                    title=mb_product["product_name"][:40],
+                )
+                images = []
+                if mb_product.get("image_link"):
+                    images.append(
+                        ProductImage(
+                            url=mb_product["image_link"],
+                            alt=mb_product.get("product_name"),
+                            is_reference=True,
+                        )
+                    )
+
+                effective_seller_id = seller_id if seller_id and seller_id.strip() else mb_product["seller_id"]
+
+                return ProductResponse(
+                    seller_id=effective_seller_id,
+                    product_id=mb_product["product_id"],
+                    title=mb_product["product_name"],
+                    description=f"{mb_product['category']} — {mb_product.get('sub_category', '')}. SKU: {mb_product.get('sku_id', '')}".strip(" —"),
+                    category=mb_product.get("category", "General"),
+                    sp=mb_product["sp"],
+                    mrp=mb_product["mrp"],
+                    discount_percent=mb_product["discount_percent"],
+                    images=images,
+                    variant=mb_product.get("size") or mb_product.get("sku_colour") or variant,
+                    is_in_stock=not mb_product.get("is_oos", False),
+                    is_published=True,
+                    field_sources={
+                        "title": FieldSource.database,
+                        "sp": FieldSource.database,
+                        "mrp": FieldSource.database,
+                        "category": FieldSource.database,
+                        "images": FieldSource.database,
+                    },
+                    fetched_at=datetime.utcnow(),
+                )
+        except Exception as e:
+            log.warning("Metabase lookup failed, falling back", error=str(e))
+
+        # 2. Try secondary: ShopDeck internal API
         try:
             product = await self._lookup_shopdeck(seller_id, product_id, variant)
         except Exception as e:
             log.warning("ShopDeck DB lookup failed, trying fallback", error=str(e))
-            # FR-4: Fallback to public page scrape (no CP)
             product = await self._fallback_scrape(product_link, seller_id)
 
         return product
