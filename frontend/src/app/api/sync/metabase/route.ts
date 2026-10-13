@@ -66,13 +66,67 @@ async function handleSync(req: NextRequest) {
       }
     }
 
+    // Optional: Trigger full background daily sync on GitHub Actions if GITHUB_TOKEN is set
+    const githubToken = process.env.GITHUB_TOKEN || process.env.GITHUB_PAT;
+    let githubWorkflowTriggered = false;
+
+    if (githubToken) {
+      try {
+        const ghRes = await fetch(
+          "https://api.github.com/repos/yashdesai117/creative-engine/actions/workflows/daily-sync.yml/dispatches",
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${githubToken}`,
+              Accept: "application/vnd.github.v3+json",
+              "User-Agent": "CreativeEngine-Sync/1.0",
+            },
+            body: JSON.stringify({ ref: "main" }),
+          }
+        );
+        if (ghRes.ok || ghRes.status === 204) {
+          githubWorkflowTriggered = true;
+        }
+      } catch (ghErr) {
+        console.warn("Could not dispatch GitHub Actions workflow:", ghErr);
+      }
+    }
+
+    // Query latest sync log from Supabase if available
+    let latestLog = null;
+    if (supabaseUrl && supabaseKey) {
+      try {
+        const logRes = await fetch(
+          `${supabaseUrl}/rest/v1/metabase_sync_logs?select=*&order=started_at.desc&limit=1`,
+          {
+            headers: {
+              apikey: supabaseKey,
+              Authorization: `Bearer ${supabaseKey}`,
+            },
+          }
+        );
+        if (logRes.ok) {
+          const logs = await logRes.json();
+          if (Array.isArray(logs) && logs.length > 0) {
+            latestLog = logs[0];
+          }
+        }
+      } catch (logErr) {
+        // ignore
+      }
+    }
+
     return NextResponse.json({
       status: "success",
-      message: `Successfully synchronized ${totalProductsCount.toLocaleString()} products across ${totalSellersCount.toLocaleString()} sellers from Metabase.`,
+      message: githubWorkflowTriggered
+        ? `Full background catalog sync triggered on GitHub Actions! Synchronizing all ${totalProductsCount.toLocaleString()} products across ${totalSellersCount.toLocaleString()} sellers to Supabase.`
+        : `Successfully synchronized ${totalProductsCount.toLocaleString()} products across ${totalSellersCount.toLocaleString()} sellers from Metabase.`,
       totalProducts: totalProductsCount,
       totalSellers: totalSellersCount,
       total_products: totalProductsCount,
       total_sellers: totalSellersCount,
+      githubWorkflowTriggered,
+      latestLog,
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
@@ -83,3 +137,4 @@ async function handleSync(req: NextRequest) {
     );
   }
 }
+

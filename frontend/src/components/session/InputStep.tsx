@@ -122,7 +122,11 @@ export function InputStep() {
         const sCount = data.totalSellers || data.total_sellers || sellers.length || 16899;
         const formattedProducts = typeof count === "number" ? count.toLocaleString() : count;
         const formattedSellers = typeof sCount === "number" ? sCount.toLocaleString() : sCount;
-        setSyncStatus(`Synced ${formattedProducts} products across ${formattedSellers} sellers!`);
+        setSyncStatus(
+          data.githubWorkflowTriggered
+            ? "Full daily sync workflow triggered on GitHub Actions! Background update in progress."
+            : data.message || `Synced ${formattedProducts} products across ${formattedSellers} sellers!`
+        );
         // Refresh sellers list in UI
         const sellersRes = await fetch("/api/products/sellers");
         if (sellersRes.ok) {
@@ -263,15 +267,21 @@ export function InputStep() {
             </span>
           </div>
 
-          <button
-            type="button"
-            onClick={handleManualSync}
-            disabled={isSyncing}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-[7px] text-[11px] font-medium border border-zinc-800 bg-zinc-900/80 hover:bg-zinc-850 hover:border-zinc-700 text-zinc-300 hover:text-white transition-all disabled:opacity-50 shadow-sm"
-          >
-            <RefreshCw className={cn("w-3 h-3 text-zinc-400", isSyncing && "animate-spin text-violet-400")} />
-            {isSyncing ? "Syncing Metabase…" : "Sync from Metabase"}
-          </button>
+          <div className="flex flex-col items-end gap-1">
+            <button
+              type="button"
+              onClick={handleManualSync}
+              disabled={isSyncing}
+              className="flex items-center gap-1.5 px-3 py-1 rounded-[7px] text-[11px] font-medium border border-zinc-800 bg-zinc-900/80 hover:bg-zinc-850 hover:border-zinc-700 text-zinc-300 hover:text-white transition-all disabled:opacity-50 shadow-sm"
+            >
+              <RefreshCw className={cn("w-3 h-3 text-zinc-400", isSyncing && "animate-spin text-violet-400")} />
+              {isSyncing ? "Syncing Metabase…" : "Sync from Metabase"}
+            </button>
+            <span className="text-[10px] text-zinc-500 font-mono flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              Daily cron at 10:00 AM IST
+            </span>
+          </div>
         </div>
 
         {syncStatus && (
