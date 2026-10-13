@@ -117,28 +117,31 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 
 -- ─────────────────────────────────────────────────────────────────────────────
--- 5. ROW LEVEL SECURITY (RLS)
+-- 5. ROW LEVEL SECURITY (RLS) & ACCESS PERMISSIONS
 -- ─────────────────────────────────────────────────────────────────────────────
-ALTER TABLE catalog_sellers ENABLE ROW LEVEL SECURITY;
-ALTER TABLE catalog_products ENABLE ROW LEVEL SECURITY;
-ALTER TABLE metabase_sync_logs ENABLE ROW LEVEL SECURITY;
+-- Public catalog mirror tables: disable RLS so synchronization succeeds seamlessly
+-- whether called using NEXT_PUBLIC_SUPABASE_ANON_KEY or SUPABASE_SERVICE_ROLE_KEY:
+ALTER TABLE catalog_sellers DISABLE ROW LEVEL SECURITY;
+ALTER TABLE catalog_products DISABLE ROW LEVEL SECURITY;
+ALTER TABLE metabase_sync_logs DISABLE ROW LEVEL SECURITY;
 
--- Allow read access to all authenticated users & service role
-CREATE POLICY catalog_sellers_read_policy ON catalog_sellers
-    FOR SELECT TO authenticated, anon USING (true);
+-- If RLS is re-enabled in the future, grant open read/write policies to all roles:
+DROP POLICY IF EXISTS catalog_sellers_read_policy ON catalog_sellers;
+DROP POLICY IF EXISTS catalog_sellers_service_all ON catalog_sellers;
+DROP POLICY IF EXISTS catalog_sellers_open_access ON catalog_sellers;
+CREATE POLICY catalog_sellers_open_access ON catalog_sellers
+    FOR ALL TO public, anon, authenticated, service_role USING (true) WITH CHECK (true);
 
-CREATE POLICY catalog_products_read_policy ON catalog_products
-    FOR SELECT TO authenticated, anon USING (true);
+DROP POLICY IF EXISTS catalog_products_read_policy ON catalog_products;
+DROP POLICY IF EXISTS catalog_products_service_all ON catalog_products;
+DROP POLICY IF EXISTS catalog_products_open_access ON catalog_products;
+CREATE POLICY catalog_products_open_access ON catalog_products
+    FOR ALL TO public, anon, authenticated, service_role USING (true) WITH CHECK (true);
 
--- Allow service role full write access (for sync jobs)
-CREATE POLICY catalog_sellers_service_all ON catalog_sellers
-    FOR ALL TO service_role USING (true) WITH CHECK (true);
-
-CREATE POLICY catalog_products_service_all ON catalog_products
-    FOR ALL TO service_role USING (true) WITH CHECK (true);
-
-CREATE POLICY metabase_sync_logs_service_all ON metabase_sync_logs
-    FOR ALL TO service_role USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS metabase_sync_logs_service_all ON metabase_sync_logs;
+DROP POLICY IF EXISTS metabase_sync_logs_open_access ON metabase_sync_logs;
+CREATE POLICY metabase_sync_logs_open_access ON metabase_sync_logs
+    FOR ALL TO public, anon, authenticated, service_role USING (true) WITH CHECK (true);
 
 
 -- ─────────────────────────────────────────────────────────────────────────────

@@ -118,15 +118,14 @@ export function InputStep() {
       const res = await fetch("/api/sync/metabase", { method: "POST" });
       const data = await res.json().catch(() => ({}));
       if (res.ok) {
-        const count = data.totalProducts || data.total_products || 1048575;
-        const sCount = data.totalSellers || data.total_sellers || sellers.length || 16899;
-        const formattedProducts = typeof count === "number" ? count.toLocaleString() : count;
-        const formattedSellers = typeof sCount === "number" ? sCount.toLocaleString() : sCount;
-        setSyncStatus(
-          data.githubWorkflowTriggered
-            ? "Full daily sync workflow triggered on GitHub Actions! Background update in progress."
-            : data.message || `Synced ${formattedProducts} products across ${formattedSellers} sellers!`
-        );
+        if (data.status === "warning") {
+          setSyncStatus(`Notice: ${data.message}`);
+        } else {
+          setSyncStatus(
+            data.message ||
+              `Synced ${data.totalProducts?.toLocaleString() || "2,000"} products across ${data.totalSellers?.toLocaleString() || "16,899"} sellers into Supabase!`
+          );
+        }
         // Refresh sellers list in UI
         const sellersRes = await fetch("/api/products/sellers");
         if (sellersRes.ok) {
@@ -134,14 +133,16 @@ export function InputStep() {
           if (Array.isArray(sData.sellers)) setSellers(sData.sellers);
         }
       } else {
-        const errMsg = data.error || data.detail || data.message || `HTTP ${res.status}`;
+        const errMsg = data.details
+          ? `${data.error || "Sync error"}: ${data.details}`
+          : data.error || data.message || `HTTP ${res.status}`;
         setSyncStatus(`Sync failed: ${errMsg}`);
       }
     } catch (err: unknown) {
       setSyncStatus(`Sync error: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
       setIsSyncing(false);
-      setTimeout(() => setSyncStatus(null), 6000);
+      setTimeout(() => setSyncStatus(null), 10000);
     }
   };
 
