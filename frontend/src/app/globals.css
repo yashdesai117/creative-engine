@@ -1,0 +1,585 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800&family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700&family=JetBrains+Mono:wght@400;500&display=swap");
+@import "tailwindcss";
+
+/* ════════════════════════════════════════
+   DESIGN TOKENS
+════════════════════════════════════════ */
+:root {
+  /* Backgrounds — zinc-based (warm dark, not blue-tinted) */
+  --canvas:    #09090B;
+  --surface:   #111113;
+  --elevated:  #1C1C1F;
+  --overlay:   #2A2A2E;
+  --hover:     rgba(255, 255, 255, 0.034);
+  --active-bg: rgba(255, 255, 255, 0.055);
+
+  /* Borders */
+  --border-faint:   rgba(255, 255, 255, 0.04);
+  --border-subtle:  rgba(255, 255, 255, 0.07);
+  --border-default: rgba(255, 255, 255, 0.11);
+  --border-strong:  rgba(255, 255, 255, 0.18);
+  --border-focus:   rgba(124, 58, 237, 0.55);
+
+  /* Text */
+  --text-1: rgba(255, 255, 255, 0.95);
+  --text-2: rgba(255, 255, 255, 0.62);
+  --text-3: rgba(255, 255, 255, 0.38);
+  --text-4: rgba(255, 255, 255, 0.22);
+
+  /* Violet accent — used sparingly */
+  --violet-700: #6D28D9;
+  --violet-600: #7C3AED;
+  --violet-500: #8B5CF6;
+  --violet-400: #A78BFA;
+  --violet-subtle: rgba(124, 58, 237, 0.09);
+  --violet-border: rgba(124, 58, 237, 0.22);
+  --violet-glow:   rgba(124, 58, 237, 0.30);
+
+  /* Semantic */
+  --emerald-text:   #34D399;
+  --emerald-subtle: rgba(52, 211, 153, 0.09);
+  --emerald-border: rgba(52, 211, 153, 0.20);
+  --amber-text:     #FBBF24;
+  --amber-subtle:   rgba(251, 191, 36, 0.09);
+  --amber-border:   rgba(251, 191, 36, 0.20);
+  --rose-text:      #F87171;
+  --rose-subtle:    rgba(248, 113, 113, 0.09);
+  --rose-border:    rgba(248, 113, 113, 0.20);
+  --sky-text:       #38BDF8;
+  --sky-subtle:     rgba(56, 189, 248, 0.09);
+  --zinc-text:      #71717A;
+  --zinc-subtle:    rgba(113, 113, 122, 0.09);
+}
+
+/* ════════════════════════════════════════
+   BASE RESET
+════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "kern" 1, "liga" 1, "ss01" 1;
+}
+
+body {
+  background-color: var(--canvas);
+  color: var(--text-1);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ════════════════════════════════════════
+   SCROLLBAR
+════════════════════════════════════════ */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.11);
+  border-radius: 100px;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.20); }
+
+/* ════════════════════════════════════════
+   SELECTION & FOCUS
+════════════════════════════════════════ */
+::selection {
+  background: rgba(124, 58, 237, 0.28);
+  color: white;
+}
+:focus-visible {
+  outline: 1.5px solid var(--border-focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ════════════════════════════════════════
+   TYPOGRAPHY UTILITIES
+════════════════════════════════════════ */
+.font-display {
+  font-family: "Plus Jakarta Sans", "Inter", sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.font-mono-ui {
+  font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
+  font-feature-settings: "calt" 1;
+}
+
+/* Big metric numbers */
+.metric-value {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--text-1);
+}
+
+/* Tight label above metrics */
+.metric-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+/* ════════════════════════════════════════
+   SURFACE / CARD PRIMITIVES
+════════════════════════════════════════ */
+.surface {
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+}
+
+.surface-elevated {
+  background: var(--elevated);
+  border: 1px solid var(--border-default);
+  border-radius: 10px;
+  box-shadow:
+    0 1px 2px rgba(0,0,0,0.25),
+    0 4px 16px rgba(0,0,0,0.18);
+}
+
+.glass-panel {
+  background: rgba(17, 17, 19, 0.75);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--border-subtle);
+}
+
+/* ════════════════════════════════════════
+   INTERACTIVE ROWS
+════════════════════════════════════════ */
+.row-interactive {
+  transition: background-color 0.1s ease;
+  cursor: pointer;
+}
+.row-interactive:hover {
+  background-color: var(--hover);
+}
+
+/* ════════════════════════════════════════
+   BADGE / PILL
+════════════════════════════════════════ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
+  padding: 3px 8px;
+  border-radius: 100px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.badge-violet {
+  color: var(--violet-400);
+  background: var(--violet-subtle);
+  border-color: var(--violet-border);
+}
+.badge-emerald {
+  color: var(--emerald-text);
+  background: var(--emerald-subtle);
+  border-color: var(--emerald-border);
+}
+.badge-amber {
+  color: var(--amber-text);
+  background: var(--amber-subtle);
+  border-color: var(--amber-border);
+}
+.badge-rose {
+  color: var(--rose-text);
+  background: var(--rose-subtle);
+  border-color: var(--rose-border);
+}
+.badge-zinc {
+  color: var(--zinc-text);
+  background: var(--zinc-subtle);
+  border-color: rgba(113, 113, 122, 0.18);
+}
+
+/* ════════════════════════════════════════
+   STATUS DOT
+════════════════════════════════════════ */
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.status-dot-pulse {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  animation: dot-pulse 2s ease-in-out infinite;
+}
+
+/* ════════════════════════════════════════
+   BUTTONS
+════════════════════════════════════════ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.14s ease;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+.btn-primary {
+  padding: 8px 16px;
+  background: var(--violet-600);
+  color: rgba(255,255,255,0.95);
+  border-color: rgba(255,255,255,0.09);
+  box-shadow:
+    0 1px 2px rgba(0,0,0,0.30),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+}
+.btn-primary:hover {
+  background: var(--violet-700);
+  box-shadow:
+    0 1px 3px rgba(0,0,0,0.40),
+    0 0 0 2.5px var(--violet-glow),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+}
+.btn-primary:active { transform: translateY(1px); }
+.btn-primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.btn-secondary {
+  padding: 7px 14px;
+  background: rgba(255,255,255,0.045);
+  color: var(--text-2);
+  border-color: var(--border-default);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.18);
+}
+.btn-secondary:hover {
+  background: rgba(255,255,255,0.075);
+  color: var(--text-1);
+  border-color: var(--border-strong);
+}
+.btn-secondary:active { transform: translateY(1px); }
+.btn-secondary:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.btn-ghost {
+  padding: 6px 12px;
+  background: transparent;
+  color: var(--text-3);
+  border-color: transparent;
+}
+.btn-ghost:hover {
+  background: var(--hover);
+  color: var(--text-1);
+}
+
+/* ════════════════════════════════════════
+   INPUTS
+════════════════════════════════════════ */
+.input {
+  width: 100%;
+  padding: 9px 12px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  color: var(--text-1);
+  font-size: 14px;
+  font-family: "Inter", sans-serif;
+  transition: all 0.14s ease;
+  outline: none;
+  line-height: 1.5;
+}
+.input::placeholder { color: var(--text-4); }
+.input:focus {
+  background: rgba(255,255,255,0.06);
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.08);
+}
+.input-error {
+  border-color: var(--rose-border) !important;
+  background: var(--rose-subtle) !important;
+}
+.input-mono {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+}
+
+/* ════════════════════════════════════════
+   STEP SIDEBAR (for session wizard)
+════════════════════════════════════════ */
+.step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: all 0.14s ease;
+}
+.step-item-active {
+  background: var(--violet-subtle);
+  border-color: var(--violet-border);
+}
+.step-item-done {
+  opacity: 0.72;
+}
+
+.step-node {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+.step-node-active {
+  background: var(--violet-600);
+  color: white;
+  box-shadow: 0 0 0 3px var(--violet-glow);
+}
+.step-node-done {
+  background: var(--emerald-subtle);
+  border: 1px solid var(--emerald-border);
+  color: var(--emerald-text);
+}
+.step-node-pending {
+  background: var(--elevated);
+  border: 1px solid var(--border-default);
+  color: var(--text-4);
+}
+
+.step-connector {
+  width: 1px;
+  flex: 1;
+  margin: 2px 0 2px 10.5px;
+  min-height: 12px;
+  background: var(--border-subtle);
+}
+.step-connector-done { background: var(--emerald-border); }
+
+/* ════════════════════════════════════════
+   CARD / OPTION STATES (Review step)
+════════════════════════════════════════ */
+.option-card-base {
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  background: var(--surface);
+  transition: all 0.15s ease;
+}
+.option-card-base:hover {
+  border-color: var(--border-default);
+  background: var(--elevated);
+}
+.option-card-selected {
+  border-color: var(--violet-border);
+  background: var(--violet-subtle);
+  box-shadow: 0 0 0 1px var(--violet-border), 0 4px 20px rgba(124, 58, 237, 0.10);
+}
+.option-card-locked {
+  border-color: var(--emerald-border);
+  background: var(--emerald-subtle);
+}
+.option-card-discarded {
+  opacity: 0.36;
+  filter: grayscale(0.6);
+}
+
+/* ════════════════════════════════════════
+   CODE / PROMPT OUTPUT
+════════════════════════════════════════ */
+.prompt-box {
+  background: var(--canvas);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12.5px;
+  line-height: 1.75;
+  color: var(--text-2);
+  white-space: pre-wrap;
+  overflow-x: auto;
+}
+
+.prompt-textarea {
+  width: 100%;
+  background: var(--canvas);
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  color: var(--text-1);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12.5px;
+  line-height: 1.75;
+  padding: 14px 16px;
+  resize: vertical;
+  transition: border-color 0.14s;
+  outline: none;
+}
+.prompt-textarea:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.08);
+}
+
+/* ════════════════════════════════════════
+   AI PROSE
+════════════════════════════════════════ */
+.ai-prose {
+  color: var(--text-2);
+  font-size: 13.5px;
+  line-height: 1.75;
+}
+.ai-prose strong { color: var(--text-1); font-weight: 600; }
+
+/* ════════════════════════════════════════
+   SHIMMER / SKELETON
+════════════════════════════════════════ */
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--surface) 25%,
+    var(--elevated) 50%,
+    var(--surface) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease infinite;
+}
+
+/* ════════════════════════════════════════
+   GENERATING TERMINAL
+════════════════════════════════════════ */
+.terminal {
+  background: var(--canvas);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  line-height: 1.8;
+  color: var(--text-2);
+  overflow: hidden;
+}
+.terminal-header {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border-faint);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.terminal-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+/* ════════════════════════════════════════
+   DIVIDER
+════════════════════════════════════════ */
+.divider {
+  height: 1px;
+  background: var(--border-subtle);
+}
+
+/* ════════════════════════════════════════
+   GRADIENT HEADING (used ONLY in page header)
+════════════════════════════════════════ */
+.heading-fade {
+  background: linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(255,255,255,0.68) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ════════════════════════════════════════
+   KEYFRAMES
+════════════════════════════════════════ */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes dot-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.85); }
+}
+@keyframes blink-cursor {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+@keyframes progress-glow {
+  0%, 100% { box-shadow: 0 0 8px var(--violet-glow); }
+  50%       { box-shadow: 0 0 20px var(--violet-glow); }
+}
+
+/* ════════════════════════════════════════
+   UTILITY OVERRIDES
+════════════════════════════════════════ */
+.text-1 { color: var(--text-1); }
+.text-2 { color: var(--text-2); }
+.text-3 { color: var(--text-3); }
+.text-4 { color: var(--text-4); }
+
+/* Legacy compat — keep glass-card for session components that still reference it */
+.glass-card {
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.glass-card:hover {
+  border-color: var(--border-default);
+}
+
+/* Step states (legacy compat) */
+.step-active {
+  background: var(--violet-600);
+  box-shadow: 0 0 16px var(--violet-glow);
+}
+.step-completed {
+  background: var(--emerald-subtle);
+  border: 1px solid var(--emerald-border);
+}
+.step-inactive {
+  background: var(--elevated);
+  border: 1px solid var(--border-default);
+}

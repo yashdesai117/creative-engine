@@ -1,0 +1,185 @@
+[
+  {
+    "id": "tmpl-001",
+    "slug": "product-hero-square",
+    "name": "Product Hero – Square",
+    "format": "banner",
+    "family": "product_hero",
+    "categories": ["Jewellery", "Fashion", "Accessories"],
+    "aspect_ratios": ["1:1"],
+    "spec": {
+      "layout": "Centered product with headline above, subtext below",
+      "text_slots": [
+        { "id": "headline", "max_chars": 40, "zone": "top", "model_generated": true },
+        { "id": "subtext", "max_chars": 80, "zone": "bottom", "model_generated": true },
+        { "id": "offer", "max_chars": 20, "zone": "badge", "model_generated": false }
+      ],
+      "visual_world": "Clean white or soft gradient background. Studio lighting.",
+      "human_presence": "none",
+      "do_rules": ["Show product clearly", "Match exact product color", "Keep background minimal"],
+      "dont_rules": ["Don't add fake shadow that doesn't match product", "No competitor logos"],
+      "reference_images": []
+    },
+    "thumbnail_url": "https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=400&q=80",
+    "version": 1,
+    "status": "active",
+    "certification_status": "certified"
+  },
+  {
+    "id": "tmpl-002",
+    "slug": "problem-solution-portrait",
+    "name": "Problem → Solution – Portrait",
+    "format": "banner",
+    "family": "problem_solution",
+    "categories": ["Jewellery", "Beauty & Personal Care", "Health & Wellness"],
+    "aspect_ratios": ["4:5", "9:16"],
+    "spec": {
+      "layout": "Split: problem visual top half, solution bottom half",
+      "text_slots": [
+        { "id": "problem_line", "max_chars": 50, "zone": "top", "model_generated": true },
+        { "id": "solution_line", "max_chars": 50, "zone": "bottom", "model_generated": true },
+        { "id": "cta", "max_chars": 25, "zone": "button", "model_generated": false }
+      ],
+      "visual_world": "Lifestyle context. Natural or warm indoor light.",
+      "human_presence": "partial",
+      "do_rules": ["Use relatable scenario", "Keep contrast high for readability"],
+      "dont_rules": ["No medical claims", "No before/after if it implies transformation"],
+      "reference_images": []
+    },
+    "thumbnail_url": "https://images.unsplash.com/photo-1588776814546-daab30f310ce?w=400&q=80",
+    "version": 1,
+    "status": "active",
+    "certification_status": "certified"
+  },
+  {
+    "id": "tmpl-003",
+    "slug": "offer-led-landscape",
+    "name": "Offer-Led – Landscape",
+    "format": "banner",
+    "family": "offer_led",
+    "categories": ["Jewellery", "Fashion", "Footwear", "Home & Kitchen"],
+    "aspect_ratios": ["16:9", "1.91:1"],
+    "spec": {
+      "layout": "Product left, offer text right",
+      "text_slots": [
+        { "id": "headline", "max_chars": 35, "zone": "right-top", "model_generated": true },
+        { "id": "discount_badge", "max_chars": 15, "zone": "badge", "model_generated": false },
+        { "id": "price", "max_chars": 20, "zone": "right-bottom", "model_generated": false },
+        { "id": "urgency", "max_chars": 30, "zone": "right-mid", "model_generated": true }
+      ],
+      "visual_world": "Bold color background matching brand accent. Product floating.",
+      "human_presence": "none",
+      "do_rules": ["Accurate price only", "Use actual discount %", "Clear legible font"],
+      "dont_rules": ["No inflated crossed-out prices", "No misleading urgency"],
+      "reference_images": []
+    },
+    "thumbnail_url": "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=400&q=80",
+    "version": 2,
+    "status": "active",
+    "certification_status": "certified"
+  },
+  {
+    "id": "tmpl-004",
+    "slug": "lifestyle-story",
+    "name": "Lifestyle Story – Stories",
+    "format": "banner",
+    "family": "lifestyle",
+    "categories": ["Jewellery", "Fashion", "Beauty & Personal Care", "Gifting"],
+    "aspect_ratios": ["9:16"],
+    "spec": {
+      "layout": "Full-bleed lifestyle image with overlay text at bottom",
+      "text_slots": [
+        { "id": "context_line", "max_chars": 45, "zone": "overlay-top", "model_generated": true },
+        { "id": "hook", "max_chars": 60, "zone": "overlay-bottom", "model_generated": true },
+        { "id": "cta", "max_chars": 20, "zone": "button", "model_generated": false }
+      ],
+      "visual_world": "Aspirational lifestyle. Golden hour or clean minimal home aesthetic. Mood-forward.",
+      "human_presence": "full",
+      "do_rules": ["Model must wear/use product", "Authentic feel over polished"],
+      "dont_rules": ["No overly posed stock-photo feel", "Don't obscure product with text"],
+      "reference_images": []
+    },
+    "thumbnail_url": "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=400&q=80",
+    "version": 1,
+    "status": "active",
+    "certification_status": "pending"
+  },
+  {
+    "id": "tmpl-005",
+    "slug": "ugc-testimonial",
+    "name": "UGC Testimonial – Square",
+    "format": "banner",
+    "family": "ugc_style",
+    "categories": ["Jewellery", "Beauty & Personal Care", "Health & Wellness", "Fashion"],
+    "aspect_ratios": ["1:1", "4:5"],
+    "spec": {
+      "layout": "Selfie-style product shot with text overlay, casual",
+      "text_slots": [
+        { "id": "testimonial", "max_chars": 100, "zone": "center", "model_generated": true },
+        { "id": "name_tag", "max_chars": 20, "zone": "bottom-left", "model_generated": true },
+        { "id": "rating", "max_chars": 10, "zone": "top-right", "model_generated": false }
+      ],
+      "visual_world": "Authentic, slightly imperfect. Natural indoor light. iPhone-style.",
+      "human_presence": "full",
+      "do_rules": ["Keep it raw and real", "Testimonial must be plausible"],
+      "dont_rules": ["No professional photography look", "No explicit health claims"],
+      "reference_images": []
+    },
+    "thumbnail_url": "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=400&q=80",
+    "version": 1,
+    "status": "active",
+    "certification_status": "certified"
+  },
+  {
+    "id": "tmpl-006",
+    "slug": "gifting-hero",
+    "name": "Gifting Hero – Square",
+    "format": "banner",
+    "family": "gifting",
+    "categories": ["Jewellery", "Gifting", "Fashion", "Beauty & Personal Care"],
+    "aspect_ratios": ["1:1", "4:5"],
+    "spec": {
+      "layout": "Product in gift context with warm overlay",
+      "text_slots": [
+        { "id": "occasion", "max_chars": 30, "zone": "top", "model_generated": true },
+        { "id": "headline", "max_chars": 50, "zone": "center", "model_generated": true },
+        { "id": "price", "max_chars": 20, "zone": "bottom", "model_generated": false }
+      ],
+      "visual_world": "Warm golds, pinks, cream. Gift-wrapping context. Festive but premium.",
+      "human_presence": "partial",
+      "do_rules": ["Evoke emotion of giving", "Warm color palette"],
+      "dont_rules": ["Don't be too transactional", "No festival-specific imagery unless occasion set"],
+      "reference_images": []
+    },
+    "thumbnail_url": "https://images.unsplash.com/photo-1512909006721-3d6018887383?w=400&q=80",
+    "version": 1,
+    "status": "active",
+    "certification_status": "certified"
+  },
+  {
+    "id": "tmpl-007",
+    "slug": "video-hook-problem-solve",
+    "name": "Video: 3-Second Hook & Demo",
+    "format": "video",
+    "family": "problem_solution",
+    "categories": ["Jewellery", "Beauty & Personal Care", "Home & Kitchen", "Fashion"],
+    "aspect_ratios": ["9:16", "4:5"],
+    "spec": {
+      "layout": "Vertical 9:16 motion reel with fast-paced 3-second hook cut to product demo and CTA",
+      "text_slots": [
+        { "id": "hook_caption", "max_chars": 45, "zone": "center", "model_generated": true },
+        { "id": "feature_callout", "max_chars": 35, "zone": "bottom", "model_generated": true },
+        { "id": "cta_overlay", "max_chars": 20, "zone": "bottom-button", "model_generated": false }
+      ],
+      "visual_world": "Dynamic UGC lighting, smartphone handheld motion, sharp punch-in transitions.",
+      "human_presence": "full",
+      "do_rules": ["Immediate visual hook in first 1.5 seconds", "Clear product usage in action"],
+      "dont_rules": ["No slow fade-in intros", "No static text cards without motion"],
+      "reference_images": []
+    },
+    "thumbnail_url": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&q=80",
+    "version": 1,
+    "status": "active",
+    "certification_status": "certified"
+  }
+]

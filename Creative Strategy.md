@@ -32,8 +32,7 @@ STAGE 1: Persona Generation (4–5 personas)
 STAGE 2: Angle Construction (for the selected persona)
     ↓ 
 STAGE 3: Hook Set (3–4 hooks, graded)
-```
-
+    
 ---
 
 ## Stage 1: Persona Generation

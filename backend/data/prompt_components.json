@@ -1,0 +1,54 @@
+{
+  "compiler": {
+    "version": "1.0",
+    "content": "PRODUCT FIDELITY RULES (non-negotiable):\n- Use the attached reference product image EXACTLY as shown\n- Do NOT redraw, recolor, or alter the product appearance in any way\n- The product must remain photorealistic and true to the reference\n\nFINANCIAL ACCURACY:\n- Show only the price and offer that match the live product page\n- Never display cost price or internal margin data\n- Discount percentage must match actual MRP vs SP calculation\n\nTEXT AND LAYOUT:\n- Keep text within safe zones (10% margin on all edges)\n- Ensure text is legible at mobile resolution (minimum 16px equivalent)\n- Honour the aspect ratio of the template exactly\n- All text slots follow the character limits specified in the template\n\nBANNED ELEMENTS:\n- No competitor logos or branding\n- No medical or health claims unless in category approved list\n- No explicit before/after transformation imagery\n- No price manipulation or inflated crossed-out prices"
+  },
+  "families": {
+    "product_hero": {
+      "version": "1.0",
+      "content": "Product Hero logic: Center the product with clear lighting. Focus on material texture, shine, and craftsmanship. Clean studio environment with minimal distraction."
+    },
+    "problem_solution": {
+      "version": "1.0",
+      "content": "Problem-Solution logic: Establish the relatable pain point or emotional friction in the visual cue or hook line. Provide the product as the effortless, definitive solution."
+    },
+    "offer_led": {
+      "version": "1.0",
+      "content": "Offer-Led logic: Emphasize maximum value perception. High contrast discount badge and pricing clarity, while keeping the product premium and desirable."
+    },
+    "lifestyle": {
+      "version": "1.0",
+      "content": "Lifestyle logic: Place the product in authentic, aspirational day-to-day settings. Focus on emotion, aesthetic mood, and natural styling."
+    },
+    "ugc_style": {
+      "version": "1.0",
+      "content": "UGC Style logic: Relatable customer perspective. Handheld composition, warm authentic lighting, conversational review tone."
+    },
+    "gifting": {
+      "version": "1.0",
+      "content": "Gifting logic: Emotional resonance around special moments, thoughtful presentation, gift box unboxing aesthetics."
+    }
+  },
+  "category_packs": {
+    "Jewellery": {
+      "version": "1.0",
+      "content": "Jewellery Pack: Emphasize 925 sterling silver stamp, rhodium shine, anti-tarnish coating, skin-safe hypoallergenic properties. Props: velvet trays, marble slabs, soft silk fabric, warm directional light."
+    },
+    "Fashion": {
+      "version": "1.0",
+      "content": "Fashion Pack: Emphasize fabric texture, drape, fit versatility, breathable weave. Props: architectural arches, neutral backdrops, daylight studio."
+    },
+    "Beauty & Personal Care": {
+      "version": "1.0",
+      "content": "Beauty Pack: Clean dermatological look, hydration droplets, ingredient botanical cues, fresh morning light."
+    },
+    "Home & Kitchen": {
+      "version": "1.0",
+      "content": "Home Pack: Cozy modern living space, functional kitchen counter, ambient warmth, durable utility."
+    },
+    "default": {
+      "version": "1.0",
+      "content": "Default Pack: Clean modern product showcase, studio gradient background, high-contrast typography, premium lighting."
+    }
+  }
+}
