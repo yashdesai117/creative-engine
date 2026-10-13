@@ -116,11 +116,11 @@ export function InputStep() {
     setSyncStatus(null);
     try {
       const res = await fetch("/api/sync/metabase", { method: "POST" });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
       if (res.ok) {
-        setSyncStatus(
-          `Synced ${data.totalProducts || 2000}+ products across ${data.totalSellers || sellers.length} sellers!`
-        );
+        const count = data.totalProducts || data.total_products || 2000;
+        const sCount = data.totalSellers || data.total_sellers || sellers.length;
+        setSyncStatus(`Synced ${count}+ products across ${sCount} sellers!`);
         // Refresh sellers list in UI
         const sellersRes = await fetch("/api/products/sellers");
         if (sellersRes.ok) {
@@ -128,13 +128,14 @@ export function InputStep() {
           if (Array.isArray(sData.sellers)) setSellers(sData.sellers);
         }
       } else {
-        setSyncStatus("Sync failed: " + (data.error || "Unknown error"));
+        const errMsg = data.error || data.detail || data.message || `HTTP ${res.status}`;
+        setSyncStatus(`Sync failed: ${errMsg}`);
       }
-    } catch {
-      setSyncStatus("Network error syncing with Metabase");
+    } catch (err: unknown) {
+      setSyncStatus(`Sync error: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
       setIsSyncing(false);
-      setTimeout(() => setSyncStatus(null), 4500);
+      setTimeout(() => setSyncStatus(null), 5000);
     }
   };
 

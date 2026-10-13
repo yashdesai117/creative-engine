@@ -10,7 +10,7 @@ import structlog
 import os
 from dotenv import load_dotenv
 
-from routers import products, sessions, templates, options, concepts
+from routers import products, sessions, templates, options, concepts, sync
 from config import settings
 
 load_dotenv()
@@ -49,6 +49,7 @@ for pfx in ["", "/api"]:
     app.include_router(templates.router, prefix=f"{pfx}/templates", tags=["templates"])
     app.include_router(options.router, prefix=f"{pfx}/options", tags=["options"])
     app.include_router(concepts.router, prefix=f"{pfx}/concepts", tags=["concepts"])
+    app.include_router(sync.router, prefix=f"{pfx}/sync", tags=["sync"])
 
 
 @app.get("/health")
