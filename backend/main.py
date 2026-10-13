@@ -42,14 +42,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Routers
-app.include_router(products.router, prefix="/products", tags=["products"])
-app.include_router(sessions.router, prefix="/sessions", tags=["sessions"])
-app.include_router(templates.router, prefix="/templates", tags=["templates"])
-app.include_router(options.router, prefix="/options", tags=["options"])
-app.include_router(concepts.router, prefix="/concepts", tags=["concepts"])
+# Routers (mounted both directly and under /api for proxy and rewrite compatibility)
+for pfx in ["", "/api"]:
+    app.include_router(products.router, prefix=f"{pfx}/products", tags=["products"])
+    app.include_router(sessions.router, prefix=f"{pfx}/sessions", tags=["sessions"])
+    app.include_router(templates.router, prefix=f"{pfx}/templates", tags=["templates"])
+    app.include_router(options.router, prefix=f"{pfx}/options", tags=["options"])
+    app.include_router(concepts.router, prefix=f"{pfx}/concepts", tags=["concepts"])
 
 
 @app.get("/health")
+@app.get("/api/health")
 async def health():
     return {"status": "ok", "service": "creative-engine", "version": "0.2.0"}

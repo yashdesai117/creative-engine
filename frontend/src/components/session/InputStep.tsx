@@ -11,6 +11,7 @@ import {
   AlertCircle,
   Loader2,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { useSessionStore } from "@/lib/store";
 import { cn, isValidUrl } from "@/lib/utils";
 import type { Format } from "@/lib/types";
@@ -19,7 +20,7 @@ const FORMAT_OPTIONS: Array<{
   value: Format;
   label: string;
   desc: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: LucideIcon;
   badge?: string;
 }> = [
   {
