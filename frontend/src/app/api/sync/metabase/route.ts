@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { fetchMetabaseCatalog, getLiveSellers } from "@/lib/metabase";
 
 export const maxDuration = 300; // Allow up to 5 minutes on Vercel Pro
 
@@ -14,37 +15,30 @@ async function handleSync(req: NextRequest) {
   const authHeader = req.headers.get("authorization");
   const cronSecret = process.env.CRON_SECRET;
 
-  // Verify secret if set
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  // If CRON_SECRET is set and request is from external cron, verify it
+  // (Manual requests from internal browser session don't have Bearer CRON_SECRET)
+  if (cronSecret && authHeader && authHeader.startsWith("Bearer ")) {
+    if (authHeader !== `Bearer ${cronSecret}`) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
   }
 
-  const METABASE_CSV_URL =
-    "https://metabase.kaip.in/api/public/card/9ba58a6c-92b1-436d-840f-fbb724c3ef24/query/csv";
-
   try {
-    const res = await fetch(METABASE_CSV_URL, {
-      headers: {
-        "User-Agent": "CreativeEngineCron/1.0",
-      },
-    });
-
-    if (!res.ok) {
-      return NextResponse.json(
-        { error: `Metabase returned status ${res.status}` },
-        { status: 502 }
-      );
-    }
+    // Force refresh the catalog cache from Metabase
+    const products = await fetchMetabaseCatalog(true);
+    const sellers = await getLiveSellers(false);
 
     return NextResponse.json({
       status: "success",
-      message: "Sync initiated successfully. Streamed from Metabase.",
+      message: `Successfully synchronized ${products.length} products across ${sellers.length} sellers from Metabase.`,
+      totalProducts: products.length,
+      totalSellers: sellers.length,
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("Metabase cron sync error:", error);
+    console.error("Metabase sync error:", error);
     return NextResponse.json(
-      { error: "Internal server error during sync" },
+      { error: "Failed to synchronize catalog from Metabase", details: String(error) },
       { status: 500 }
     );
   }

@@ -45,9 +45,9 @@ let cachedSellers: MetabaseSeller[] | null = null;
 let lastFetchTime = 0;
 const CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutes
 
-export async function fetchMetabaseCatalog(): Promise<MetabaseProduct[]> {
+export async function fetchMetabaseCatalog(forceRefresh = false): Promise<MetabaseProduct[]> {
   const now = Date.now();
-  if (cachedProducts && now - lastFetchTime < CACHE_TTL_MS) {
+  if (!forceRefresh && cachedProducts && now - lastFetchTime < CACHE_TTL_MS) {
     return cachedProducts;
   }
 
@@ -143,8 +143,8 @@ export async function fetchMetabaseCatalog(): Promise<MetabaseProduct[]> {
   }
 }
 
-export async function getLiveSellers(): Promise<MetabaseSeller[]> {
-  await fetchMetabaseCatalog();
+export async function getLiveSellers(forceRefresh = false): Promise<MetabaseSeller[]> {
+  await fetchMetabaseCatalog(forceRefresh);
   return cachedSellers || [];
 }
 

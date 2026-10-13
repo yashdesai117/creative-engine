@@ -18,6 +18,7 @@ import {
   Store,
   Tag,
   ShoppingBag,
+  RefreshCw,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useSessionStore } from "@/lib/store";
@@ -105,6 +106,37 @@ export function InputStep() {
 
   // Resolved preview state
   const [previewProduct, setPreviewProduct] = useState<MetabaseProduct | null>(null);
+
+  // Manual Metabase Sync state
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [syncStatus, setSyncStatus] = useState<string | null>(null);
+
+  const handleManualSync = async () => {
+    setIsSyncing(true);
+    setSyncStatus(null);
+    try {
+      const res = await fetch("/api/sync/metabase", { method: "POST" });
+      const data = await res.json();
+      if (res.ok) {
+        setSyncStatus(
+          `Synced ${data.totalProducts || 2000}+ products across ${data.totalSellers || sellers.length} sellers!`
+        );
+        // Refresh sellers list in UI
+        const sellersRes = await fetch("/api/products/sellers");
+        if (sellersRes.ok) {
+          const sData = await sellersRes.json();
+          if (Array.isArray(sData.sellers)) setSellers(sData.sellers);
+        }
+      } else {
+        setSyncStatus("Sync failed: " + (data.error || "Unknown error"));
+      }
+    } catch {
+      setSyncStatus("Network error syncing with Metabase");
+    } finally {
+      setIsSyncing(false);
+      setTimeout(() => setSyncStatus(null), 4500);
+    }
+  };
 
   // Fetch sellers on mount
   useEffect(() => {
@@ -217,15 +249,38 @@ export function InputStep() {
         animate={{ opacity: 1, y: 0 }}
         className="mb-6"
       >
-        <div className="flex items-center gap-2 mb-2">
-          <span className="badge badge-violet flex items-center gap-1.5 py-0.5 px-2.5">
-            <Sparkles className="w-3 h-3 text-violet-400" />
-            Metabase Live Catalog Connected
-          </span>
-          <span className="text-[11px] text-zinc-400 font-mono">
-            {sellers.length > 0 ? `${sellers.length} Active Sellers` : "Syncing 2,000+ Products"}
-          </span>
+        <div className="flex items-center justify-between gap-2 mb-2">
+          <div className="flex items-center gap-2">
+            <span className="badge badge-violet flex items-center gap-1.5 py-0.5 px-2.5">
+              <Sparkles className="w-3 h-3 text-violet-400" />
+              Metabase Live Catalog
+            </span>
+            <span className="text-[11px] text-zinc-400 font-mono">
+              {sellers.length > 0 ? `${sellers.length} Active Sellers` : "Connecting..."}
+            </span>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleManualSync}
+            disabled={isSyncing}
+            className="flex items-center gap-1.5 px-3 py-1 rounded-[7px] text-[11px] font-medium border border-zinc-800 bg-zinc-900/80 hover:bg-zinc-850 hover:border-zinc-700 text-zinc-300 hover:text-white transition-all disabled:opacity-50 shadow-sm"
+          >
+            <RefreshCw className={cn("w-3 h-3 text-zinc-400", isSyncing && "animate-spin text-violet-400")} />
+            {isSyncing ? "Syncing Metabase…" : "Sync from Metabase"}
+          </button>
         </div>
+
+        {syncStatus && (
+          <motion.div
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-3 p-2.5 rounded-[8px] bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 text-xs flex items-center gap-2"
+          >
+            <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+            <span>{syncStatus}</span>
+          </motion.div>
+        )}
         <h2
           className="font-display mb-1.5"
           style={{

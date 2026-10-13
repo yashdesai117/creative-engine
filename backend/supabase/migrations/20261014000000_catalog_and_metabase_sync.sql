@@ -137,17 +137,24 @@ CREATE POLICY metabase_sync_logs_service_all ON metabase_sync_logs
 
 
 -- ─────────────────────────────────────────────────────────────────────────────
+-- ─────────────────────────────────────────────────────────────────────────────
 -- 6. DAILY CRON AT 10:00 AM IST (04:30 AM UTC)
 -- ─────────────────────────────────────────────────────────────────────────────
 -- India Standard Time (IST) is UTC+5:30.
 -- Therefore 10:00 AM IST corresponds to 04:30 AM UTC.
 -- Cron format: 30 4 * * * (minute 30, hour 4 every day)
 
--- If you are using Supabase pg_cron + pg_net to invoke your sync API:
-/*
-SELECT cron.unschedule('sync-metabase-daily-10am');
+-- Safely unschedule only if the job already exists (prevents XX000: could not find valid entry):
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'sync-metabase-catalog-daily-10am') THEN
+        PERFORM cron.unschedule('sync-metabase-catalog-daily-10am');
+    END IF;
+END $$;
+
+-- Schedule daily sync job
 SELECT cron.schedule(
-    'sync-metabase-daily-10am',
+    'sync-metabase-catalog-daily-10am',
     '30 4 * * *',
     $$
     SELECT net.http_post(
@@ -160,4 +167,4 @@ SELECT cron.schedule(
     );
     $$
 );
-*/
+
