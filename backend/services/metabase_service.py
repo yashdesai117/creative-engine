@@ -78,6 +78,7 @@ class MetabaseService:
                         "website_product_link": str(row_dict.get("website_product_link") or ""),
                         "product_id": str(row_dict.get("product_id") or ""),
                         "product_name": str(row_dict.get("product_name") or ""),
+                        "product_description": str(row_dict.get("product_description") or "").strip(),
                         "sku_id": str(row_dict.get("sku_id") or ""),
                         "size": row_dict.get("size"),
                         "sku_colour": row_dict.get("sku_colour"),

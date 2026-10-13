@@ -97,18 +97,31 @@ export const useSessionStore = create<SessionFlowState>()((set, get) => ({
             },
             fetchedAt: data.fetched_at || new Date().toISOString(),
           };
+        } else {
+          const errData = await response.json().catch(() => ({}));
+          throw new Error(
+            errData.error || `Product not found in Metabase catalog (HTTP ${response.status})`
+          );
         }
-      } catch (apiErr) {
-        console.warn("Could not reach /api/products/resolve, falling back to mock:", apiErr);
+      } catch (apiErr: unknown) {
+        const msg = apiErr instanceof Error ? apiErr.message : String(apiErr);
+        console.warn("Product resolution failed:", msg);
+        set({
+          isFetching: false,
+          fetchError:
+            msg ||
+            "Could not find this product in the Metabase catalog. Please choose one of the available catalog items or check the product link.",
+        });
+        return;
       }
 
       if (!resolvedProduct) {
-        // Fallback for development if URL is not in Metabase
-        resolvedProduct = {
-          ...MOCK_PRODUCT,
-          sellerId: inputForm.sellerId,
-          productLink: inputForm.productLink,
-        };
+        set({
+          isFetching: false,
+          fetchError:
+            "Product could not be identified in Metabase. Please verify the URL or select an item from the catalog.",
+        });
+        return;
       }
 
       const session: Session = {
@@ -126,10 +139,11 @@ export const useSessionStore = create<SessionFlowState>()((set, get) => ({
       };
 
       set({ session, isFetching: false, currentStep: 1 });
-    } catch (err) {
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
       set({
         isFetching: false,
-        fetchError: "Could not fetch product. Please check the link and try again.",
+        fetchError: msg || "Could not fetch product. Please check the link and try again.",
       });
     }
   },

@@ -40,6 +40,7 @@ CREATE TABLE IF NOT EXISTS catalog_products (
     product_id TEXT NOT NULL,
     sku_id TEXT NOT NULL DEFAULT '',
     product_name TEXT NOT NULL,
+    product_description TEXT,
     size TEXT,
     sku_colour TEXT,
     cp NUMERIC(12, 2) DEFAULT 0.00,
@@ -62,6 +63,10 @@ CREATE TABLE IF NOT EXISTS catalog_products (
     -- Unique constraint for idempotent upserting from Metabase
     CONSTRAINT uq_catalog_product_sku UNIQUE (seller_id, product_id, sku_id)
 );
+
+-- Idempotent column addition for existing tables
+ALTER TABLE catalog_products ADD COLUMN IF NOT EXISTS product_description TEXT;
+
 
 -- High-performance query indexes
 CREATE INDEX IF NOT EXISTS idx_catalog_products_seller_id ON catalog_products (seller_id);

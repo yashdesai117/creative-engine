@@ -17,11 +17,17 @@ export async function POST(req: NextRequest) {
     const matched = await findProduct(productLink, sellerId);
 
     if (matched) {
+      const desc =
+        matched.product_description?.trim() ||
+        `${matched.category}${matched.sub_category ? ` — ${matched.sub_category}` : ""}. SKU: ${matched.sku_id}`;
+
       const product = {
         seller_id: matched.seller_id,
+        seller_name: matched.seller_name,
         product_id: matched.product_id,
+        sku_id: matched.sku_id,
         title: matched.product_name,
-        description: `${matched.category}${matched.sub_category ? ` — ${matched.sub_category}` : ""}. SKU: ${matched.sku_id}`,
+        description: desc,
         category: matched.category,
         sub_category: matched.sub_category,
         sp: matched.sp,
@@ -29,7 +35,7 @@ export async function POST(req: NextRequest) {
         cp: matched.cp,
         discount_percent: matched.discount_percent,
         images: matched.image_link
-          ? [{ url: matched.image_link, alt: matched.product_name, is_reference: true }]
+          ? [{ url: matched.image_link, alt: matched.product_name, isReference: true }]
           : [],
         variant: matched.size || matched.sku_colour || null,
         is_in_stock: !matched.is_oos,

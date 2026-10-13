@@ -7,6 +7,7 @@ export interface MetabaseProduct {
   website_product_link: string;
   product_id: string;
   product_name: string;
+  product_description?: string;
   sku_id: string;
   size?: string | null;
   sku_colour?: string | null;
@@ -85,6 +86,7 @@ export async function fetchMetabaseCatalog(forceRefresh = false): Promise<Metaba
       const cp = Number(getVal("cp") || 0);
       const discount_percent =
         mrp > sp && mrp > 0 ? Math.round(((mrp - sp) / mrp) * 1000) / 10 : 0;
+      const descVal = getVal("product_description");
 
       return {
         seller_id: String(getVal("seller_id") || ""),
@@ -93,6 +95,7 @@ export async function fetchMetabaseCatalog(forceRefresh = false): Promise<Metaba
         website_product_link: String(getVal("website_product_link") || ""),
         product_id: String(getVal("product_id") || ""),
         product_name: String(getVal("product_name") || ""),
+        product_description: descVal ? String(descVal).trim() : "",
         sku_id: String(getVal("sku_id") || ""),
         size: (getVal("size") as string) || null,
         sku_colour: (getVal("sku_colour") as string) || null,
@@ -216,135 +219,180 @@ export async function getProductsBySeller(
     return matched.slice(0, limit);
   }
 
-  // 3. Fallback: Generate structured preview item for any seller from 16,899 sellers
-  const sellerInfo = allSellersList.find((s) => s.seller_id === sellerId);
-  if (sellerInfo) {
-    return [
-      {
-        seller_id: sellerInfo.seller_id,
-        seller_name: sellerInfo.seller_name,
-        seller_website: sellerInfo.seller_website,
-        website_product_link: sellerInfo.seller_website
-          ? `https://${sellerInfo.seller_website.replace(/^https?:\/\//, "")}/products/sample`
-          : "",
-        product_id: `${sellerInfo.seller_id}-catalog`,
-        product_name: `${sellerInfo.seller_name} Featured Product`,
-        sku_id: `${sellerInfo.seller_id}-01`,
-        size: "Standard",
-        sku_colour: "Default",
-        cp: 299,
-        sp: 799,
-        mrp: 1499,
-        discount_percent: 46.7,
-        quantity: 100,
-        lifetime_sales: 150000,
-        lifetime_orders: 200,
-        is_oos: false,
-        category: sellerInfo.categories[0] || "General",
-        sub_category: sellerInfo.categories[1] || "",
-        image_link: sellerInfo.sample_image || "",
-      },
-    ];
-  }
-
   return [];
 }
 
 /**
- * Resolves a product by link or ID, supporting any seller in the 16,899 seller catalog.
+ * Normalizes a URL for robust matching:
+ * removes protocol, www, query parameters, hashes, and trailing slashes.
+ */
+function normalizeUrl(urlStr: string): string {
+  try {
+    const u = new URL(urlStr.startsWith("http") ? urlStr : `https://${urlStr}`);
+    return `${u.hostname.replace(/^www\./, "")}${u.pathname}`.toLowerCase().replace(/\/+$/, "");
+  } catch {
+    return urlStr.toLowerCase().replace(/^https?:\/\//, "").replace(/^www\./, "").split("?")[0].split("#")[0].replace(/\/+$/, "");
+  }
+}
+
+/**
+ * Resolves a product by link or ID strictly from Metabase or Supabase.
+ * Returns null if not found (never invents mock data).
  */
 export async function findProduct(
   linkOrId: string,
   sellerId?: string
 ): Promise<MetabaseProduct | null> {
   const clean = linkOrId.trim();
+  if (!clean) return null;
 
-  // 1. Try Supabase catalog_products first
+  const normalizedInput = normalizeUrl(clean);
+  const cleanLower = clean.toLowerCase();
+
+  // Extract path segments (e.g., from https://themantrust.com/catalogue/MxYNDqJn/5ZFw8u3A)
+  const segments = clean
+    .replace(/^https?:\/\/[^/]+/, "")
+    .split("/")
+    .map((s) => s.split("?")[0].split("#")[0].trim())
+    .filter(Boolean);
+
+  // 1. Try Supabase catalog_products first if credentials are configured
   if (supabaseUrl && supabaseKey) {
     try {
       const encoded = encodeURIComponent(clean);
-      const url = `${supabaseUrl}/rest/v1/catalog_products?or=(website_product_link.eq.${encoded},product_id.eq.${encoded})&limit=1`;
+      const orFilters = [
+        `website_product_link.eq.${encoded}`,
+        `product_id.eq.${encoded}`,
+        `sku_id.eq.${encoded}`,
+      ];
+
+      // Add segment-based filters if any
+      for (const seg of segments) {
+        if (seg.length >= 4) {
+          const encSeg = encodeURIComponent(seg);
+          orFilters.push(`product_id.eq.${encSeg}`);
+          orFilters.push(`sku_id.eq.${encSeg}`);
+        }
+      }
+
+      let url = `${supabaseUrl}/rest/v1/catalog_products?or=(${orFilters.join(",")})&limit=1`;
+      if (sellerId) {
+        url += `&seller_id=eq.${encodeURIComponent(sellerId)}`;
+      }
+
       const res = await fetch(url, {
         headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` },
       });
       if (res.ok) {
         const sbProds = await res.json();
-        if (Array.isArray(sbProds) && sbProds.length > 0) return sbProds[0];
+        if (Array.isArray(sbProds) && sbProds.length > 0) {
+          const row = sbProds[0];
+          return {
+            seller_id: row.seller_id,
+            seller_name: row.seller_name || "",
+            seller_website: row.seller_website || "",
+            website_product_link: row.website_product_link || clean,
+            product_id: row.product_id,
+            product_name: row.product_name,
+            product_description: row.product_description || "",
+            sku_id: row.sku_id || "",
+            size: row.size || null,
+            sku_colour: row.sku_colour || null,
+            cp: Number(row.cp) || 0,
+            sp: Number(row.sp) || 0,
+            mrp: Number(row.mrp) || Number(row.sp) || 0,
+            discount_percent: Number(row.discount_percent) || 0,
+            quantity: Number(row.quantity) || 0,
+            lifetime_sales: Number(row.lifetime_sales) || 0,
+            lifetime_orders: Number(row.lifetime_orders) || 0,
+            is_oos: Boolean(row.is_oos),
+            category: row.category || "General",
+            sub_category: row.sub_category || "",
+            product_type: row.product_type || "",
+            image_link: row.image_link || "",
+            catalogue_updated_at: row.catalogue_updated_at || undefined,
+          };
+        }
       }
     } catch (e) {
       console.warn("Supabase findProduct failed:", e);
     }
   }
 
-  // 2. Try in-memory Metabase cached products
+  // 2. Search in-memory Metabase catalog
   const products = await fetchMetabaseCatalog();
-  const cleanLower = clean.toLowerCase();
 
+  // (a) Exact link match
   const exact = products.find(
     (p) => p.website_product_link.trim().toLowerCase() === cleanLower
   );
   if (exact) return exact;
 
-  try {
-    const parsed = new URL(linkOrId);
-    const path = parsed.pathname.toLowerCase();
-    const byPath = products.find((p) => {
-      try {
-        return new URL(p.website_product_link).pathname.toLowerCase() === path;
-      } catch {
-        return false;
-      }
-    });
-    if (byPath) return byPath;
-  } catch {
-    // not a full url
-  }
+  // (b) Normalized link match
+  const byNormLink = products.find(
+    (p) => normalizeUrl(p.website_product_link) === normalizedInput
+  );
+  if (byNormLink) return byNormLink;
 
-  const byPid = products.find((p) => cleanLower.includes(p.product_id.toLowerCase()));
+  // (c) Exact Product ID match
+  const byPid = products.find(
+    (p) => p.product_id.toLowerCase() === cleanLower
+  );
   if (byPid) return byPid;
 
+  // (d) Exact SKU ID match
+  const bySku = products.find(
+    (p) => p.sku_id.toLowerCase() === cleanLower
+  );
+  if (bySku) return bySku;
+
+  // (e) Path segments match (e.g. MxYNDqJn or 5ZFw8u3A)
+  // (e) Path segments match (e.g. MxYNDqJn or 5ZFw8u3A)
+  for (const seg of segments) {
+    if (seg.length >= 3) {
+      const segLower = seg.toLowerCase();
+      const bySeg = products.find(
+        (p) =>
+          (p.product_id && p.product_id.toLowerCase() === segLower) ||
+          (p.sku_id && p.sku_id.toLowerCase() === segLower)
+      );
+      if (bySeg) return bySeg;
+    }
+  }
+
+  // (f) Normalized link suffix or prefix match (only when non-empty and long enough)
+  if (normalizedInput.length >= 8) {
+    const bySubLink = products.find((p) => {
+      if (!p.website_product_link || p.website_product_link.trim().length < 8) return false;
+      const pNorm = normalizeUrl(p.website_product_link);
+      if (pNorm.length < 8) return false;
+      return pNorm === normalizedInput || pNorm.endsWith(normalizedInput) || normalizedInput.endsWith(pNorm);
+    });
+    if (bySubLink) return bySubLink;
+  }
+
+  // (g) Product ID in URL path boundary (e.g. /MxYNDqJn/ or =MxYNDqJn)
+  const byPathPid = products.find((p) => {
+    if (!p.product_id || p.product_id.length < 3) return false;
+    const pidLower = p.product_id.toLowerCase();
+    const regex = new RegExp(`[/=]${pidLower}(?:[/\\?#]|$)`, "i");
+    return regex.test(cleanLower);
+  });
+  if (byPathPid) return byPathPid;
+
+  // (h) Seller-scoped match if sellerId is provided
   if (sellerId) {
     const sellerProds = products.filter((p) => p.seller_id === sellerId);
-    if (sellerProds.length > 0) return sellerProds[0];
+    if (sellerProds.length > 0) {
+      // Check if product_name matches query
+      const byName = sellerProds.find((p) =>
+        cleanLower.length >= 6 && p.product_name.toLowerCase().includes(cleanLower)
+      );
+      if (byName) return byName;
+    }
   }
 
-  // 3. Fallback: match by domain or sellerId across all 16,899 sellers
-  const matchingSeller = allSellersList.find(
-    (s) =>
-      (sellerId && s.seller_id === sellerId) ||
-      (s.seller_website && cleanLower.includes(s.seller_website.toLowerCase()))
-  );
-
-  if (matchingSeller) {
-    const urlSlug = clean.split("/").filter(Boolean).pop()?.replace(/[-_]/g, " ") || "";
-    const inferredTitle = urlSlug
-      ? urlSlug.charAt(0).toUpperCase() + urlSlug.slice(1)
-      : `${matchingSeller.seller_name} Item`;
-
-    return {
-      seller_id: matchingSeller.seller_id,
-      seller_name: matchingSeller.seller_name,
-      seller_website: matchingSeller.seller_website,
-      website_product_link: linkOrId,
-      product_id: `PROD-${Date.now().toString().slice(-6)}`,
-      product_name: inferredTitle,
-      sku_id: `SKU-${Date.now().toString().slice(-6)}`,
-      size: "Standard",
-      sku_colour: "Default",
-      cp: 399,
-      sp: 999,
-      mrp: 1999,
-      discount_percent: 50.0,
-      quantity: 50,
-      lifetime_sales: 50000,
-      lifetime_orders: 50,
-      is_oos: false,
-      category: matchingSeller.categories[0] || "General",
-      sub_category: matchingSeller.categories[1] || "",
-      image_link: matchingSeller.sample_image || "",
-    };
-  }
-
+  // Strict: do NOT fabricate mock products.
   return null;
 }
 

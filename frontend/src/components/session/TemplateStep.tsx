@@ -33,12 +33,25 @@ export function TemplateStep() {
   const { session, selectTemplate, deselectTemplate, setStep, generateOptions } = useSessionStore();
   const product = session?.product;
 
-  const availableTemplates = MOCK_TEMPLATES.filter(
+  const categoryMatch = MOCK_TEMPLATES.filter(
     (t) =>
       t.format === session?.format &&
       t.status === "active" &&
-      (!product?.category || t.categories.includes(product.category))
+      (!product?.category ||
+        t.categories.length === 0 ||
+        t.categories.some((c) => {
+          const normProdCat = product.category.toLowerCase().replace(/_/g, " ");
+          const normCat = c.toLowerCase().replace(/_/g, " ");
+          return normProdCat.includes(normCat) || normCat.includes(normProdCat);
+        }))
   );
+
+  const availableTemplates =
+    categoryMatch.length > 0
+      ? categoryMatch
+      : MOCK_TEMPLATES.filter(
+          (t) => t.format === session?.format && t.status === "active"
+        );
 
   const selectedIds = session?.selectedTemplateIds ?? [];
   const canProceed = selectedIds.length >= 1;

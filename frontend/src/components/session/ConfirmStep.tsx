@@ -18,7 +18,7 @@ import { useSessionStore } from "@/lib/store";
 import { cn, formatCurrency } from "@/lib/utils";
 
 const SOURCE_LABELS: Record<string, { label: string; icon: React.ComponentType<any>; color: string }> = {
-  database: { label: "ShopDeck DB", icon: Database, color: "text-emerald-400" },
+  database: { label: "Metabase Catalog", icon: Database, color: "text-emerald-400" },
   fallback: { label: "Page scrape", icon: AlertTriangle, color: "text-amber-400" },
   user_override: { label: "Edited by you", icon: User, color: "text-indigo-400" },
 };
@@ -40,7 +40,7 @@ export function ConfirmStep() {
     );
   };
 
-  const canProceed = selectedImages.length >= 1;
+  const canProceed = product.images.length === 0 || selectedImages.length >= 1;
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -226,20 +226,26 @@ export function ConfirmStep() {
 
           {/* Description */}
           <div className="glass-card rounded-2xl p-5">
-            <p className="text-xs font-semibold text-[rgba(255,255,255,0.5)] uppercase tracking-wider mb-3 flex items-center gap-1.5">
-              <Edit3 className="w-3.5 h-3.5" />
-              Description
-            </p>
-            <p className="text-sm text-[rgba(255,255,255,0.65)] leading-relaxed">
-              {product.description}
-            </p>
-            <div className="mt-3 pt-3 border-t border-[rgba(99,102,241,0.08)] flex items-center justify-between">
-              <span className="text-xs text-[rgba(255,255,255,0.3)] flex items-center gap-1">
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-xs font-semibold text-[rgba(255,255,255,0.5)] uppercase tracking-wider flex items-center gap-1.5">
+                <Edit3 className="w-3.5 h-3.5 text-indigo-400" />
+                Product Description
+              </p>
+              <span className="text-[11px] text-emerald-400 font-mono bg-emerald-500/10 px-2 py-0.5 rounded-full flex items-center gap-1">
                 <Database className="w-3 h-3" />
-                Source: ShopDeck DB
+                Metabase Live
               </span>
-              <span className="text-xs text-[rgba(255,255,255,0.3)]">
-                Fetched {new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
+            </div>
+            <div className="text-sm text-[rgba(255,255,255,0.7)] leading-relaxed whitespace-pre-line max-h-72 overflow-y-auto pr-2 custom-scrollbar bg-[rgba(18,18,32,0.3)] p-3.5 rounded-xl border border-[rgba(99,102,241,0.1)]">
+              {product.description || "No description provided in Metabase."}
+            </div>
+            <div className="mt-3 pt-3 border-t border-[rgba(99,102,241,0.08)] flex items-center justify-between">
+              <span className="text-xs text-[rgba(255,255,255,0.35)] flex items-center gap-1">
+                <Database className="w-3 h-3 text-emerald-400" />
+                Source: Metabase Live Query
+              </span>
+              <span className="text-xs text-[rgba(255,255,255,0.35)] font-mono">
+                Fetched {new Date(product.fetchedAt).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
               </span>
             </div>
           </div>

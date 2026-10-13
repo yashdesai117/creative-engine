@@ -25,44 +25,165 @@ async function handleSync(req: NextRequest) {
   }
 
   try {
-    // Force refresh the catalog cache from Metabase
-    await fetchMetabaseCatalog(true);
-    const sellers = await getLiveSellers();
+    // 1. Force refresh the catalog cache from Metabase live query
+    const products = await fetchMetabaseCatalog(true);
 
-    const totalSellersCount = sellers.length || 16899;
-    const totalProductsCount = 1048575; // Full catalog size streamed from Metabase
+    // 2. Aggregate distinct sellers from live Metabase products
+    const sellersMap = new Map<
+      string,
+      {
+        seller_id: string;
+        seller_name: string;
+        seller_website: string | null;
+        product_count: number;
+        sample_image_url: string | null;
+        categories: string[];
+        updated_at: string;
+      }
+    >();
 
-    // If Supabase credentials are configured, upsert top sellers into Supabase catalog_sellers
+    for (const p of products) {
+      if (!p.seller_id) continue;
+      const existing = sellersMap.get(p.seller_id);
+      if (!existing) {
+        sellersMap.set(p.seller_id, {
+          seller_id: p.seller_id,
+          seller_name: p.seller_name || "ShopDeck Seller",
+          seller_website: p.seller_website || null,
+          product_count: 1,
+          sample_image_url: p.image_link || null,
+          categories: p.category ? [p.category] : [],
+          updated_at: new Date().toISOString(),
+        });
+      } else {
+        existing.product_count++;
+        if (p.category && !existing.categories.includes(p.category)) {
+          existing.categories.push(p.category);
+        }
+        if (!existing.sample_image_url && p.image_link) {
+          existing.sample_image_url = p.image_link;
+        }
+      }
+    }
+
+    const sellersList = Array.from(sellersMap.values());
     const supabaseUrl =
       process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
     const supabaseKey =
       process.env.SUPABASE_SERVICE_ROLE_KEY ||
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-    if (supabaseUrl && supabaseKey && sellers.length > 0) {
-      try {
-        const payload = sellers.slice(0, 500).map((s) => ({
-          seller_id: s.seller_id,
-          seller_name: s.seller_name,
-          seller_website: s.seller_website || null,
-          product_count: s.product_count,
-          sample_image_url: s.sample_image || null,
-          categories: s.categories || [],
-          updated_at: new Date().toISOString(),
-        }));
+    let syncedToSupabase = false;
+    let logId: string | null = null;
 
-        await fetch(`${supabaseUrl}/rest/v1/catalog_sellers`, {
-          method: "POST",
-          headers: {
-            apikey: supabaseKey,
-            Authorization: `Bearer ${supabaseKey}`,
-            "Content-Type": "application/json",
-            Prefer: "resolution=merge-duplicates",
-          },
-          body: JSON.stringify(payload),
-        });
+    // 3. If Supabase credentials are configured, upsert sellers AND products
+    if (supabaseUrl && supabaseKey) {
+      try {
+        // Start sync log
+        try {
+          const logInit = await fetch(`${supabaseUrl}/rest/v1/metabase_sync_logs`, {
+            method: "POST",
+            headers: {
+              apikey: supabaseKey,
+              Authorization: `Bearer ${supabaseKey}`,
+              "Content-Type": "application/json",
+              Prefer: "return=representation",
+            },
+            body: JSON.stringify({
+              status: "running",
+              started_at: new Date().toISOString(),
+            }),
+          });
+          if (logInit.ok) {
+            const logArr = await logInit.json();
+            if (Array.isArray(logArr) && logArr.length > 0) logId = logArr[0].id;
+          }
+        } catch {
+          // Log table might not be initialized yet; continue with sync
+        }
+
+        // Upsert sellers in chunks of 200
+        for (let i = 0; i < sellersList.length; i += 200) {
+          const chunk = sellersList.slice(i, i + 200);
+          await fetch(`${supabaseUrl}/rest/v1/catalog_sellers`, {
+            method: "POST",
+            headers: {
+              apikey: supabaseKey,
+              Authorization: `Bearer ${supabaseKey}`,
+              "Content-Type": "application/json",
+              Prefer: "resolution=merge-duplicates",
+            },
+            body: JSON.stringify(chunk),
+          });
+        }
+
+        // Upsert products in chunks of 200
+        const productsPayload = products
+          .filter((p) => p.seller_id && p.product_id)
+          .map((p) => ({
+            seller_id: p.seller_id,
+            seller_name: p.seller_name || null,
+            seller_website: p.seller_website || null,
+            website_product_link: p.website_product_link,
+            product_id: p.product_id,
+            sku_id: p.sku_id || "",
+            product_name: p.product_name,
+            product_description: p.product_description || null,
+            size: p.size || null,
+            sku_colour: p.sku_colour || null,
+            cp: p.cp || 0,
+            sp: p.sp || 0,
+            mrp: p.mrp || p.sp || 0,
+            discount_percent: p.discount_percent || 0,
+            margin_percent:
+              p.sp > 0 && p.cp > 0 ? Math.round(((p.sp - p.cp) / p.sp) * 1000) / 10 : 0,
+            quantity: p.quantity || 0,
+            lifetime_sales: p.lifetime_sales || 0,
+            lifetime_orders: p.lifetime_orders || 0,
+            is_oos: Boolean(p.is_oos),
+            category: p.category || "General",
+            sub_category: p.sub_category || null,
+            product_type: p.product_type || null,
+            image_link: p.image_link || null,
+            catalogue_updated_at: p.catalogue_updated_at || null,
+            synced_at: new Date().toISOString(),
+          }));
+
+        for (let i = 0; i < productsPayload.length; i += 200) {
+          const chunk = productsPayload.slice(i, i + 200);
+          await fetch(`${supabaseUrl}/rest/v1/catalog_products`, {
+            method: "POST",
+            headers: {
+              apikey: supabaseKey,
+              Authorization: `Bearer ${supabaseKey}`,
+              "Content-Type": "application/json",
+              Prefer: "resolution=merge-duplicates",
+            },
+            body: JSON.stringify(chunk),
+          });
+        }
+
+        syncedToSupabase = true;
+
+        // Finish sync log
+        if (logId) {
+          await fetch(`${supabaseUrl}/rest/v1/metabase_sync_logs?id=eq.${logId}`, {
+            method: "PATCH",
+            headers: {
+              apikey: supabaseKey,
+              Authorization: `Bearer ${supabaseKey}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              status: "success",
+              completed_at: new Date().toISOString(),
+              total_rows_processed: products.length,
+              total_sellers_synced: sellersList.length,
+            }),
+          });
+        }
       } catch (sbErr) {
-        console.warn("Failed to upsert sellers to Supabase during sync:", sbErr);
+        console.warn("Failed during Supabase catalog sync:", sbErr);
       }
     }
 
@@ -92,41 +213,15 @@ async function handleSync(req: NextRequest) {
       }
     }
 
-    // Query latest sync log from Supabase if available
-    let latestLog = null;
-    if (supabaseUrl && supabaseKey) {
-      try {
-        const logRes = await fetch(
-          `${supabaseUrl}/rest/v1/metabase_sync_logs?select=*&order=started_at.desc&limit=1`,
-          {
-            headers: {
-              apikey: supabaseKey,
-              Authorization: `Bearer ${supabaseKey}`,
-            },
-          }
-        );
-        if (logRes.ok) {
-          const logs = await logRes.json();
-          if (Array.isArray(logs) && logs.length > 0) {
-            latestLog = logs[0];
-          }
-        }
-      } catch (logErr) {
-        // ignore
-      }
-    }
-
     return NextResponse.json({
       status: "success",
-      message: githubWorkflowTriggered
-        ? `Full background catalog sync triggered on GitHub Actions! Synchronizing all ${totalProductsCount.toLocaleString()} products across ${totalSellersCount.toLocaleString()} sellers to Supabase.`
-        : `Successfully synchronized ${totalProductsCount.toLocaleString()} products across ${totalSellersCount.toLocaleString()} sellers from Metabase.`,
-      totalProducts: totalProductsCount,
-      totalSellers: totalSellersCount,
-      total_products: totalProductsCount,
-      total_sellers: totalSellersCount,
+      message: syncedToSupabase
+        ? `Successfully synced ${products.length.toLocaleString()} products across ${sellersList.length.toLocaleString()} sellers from Metabase into Supabase!`
+        : `Successfully fetched and refreshed ${products.length.toLocaleString()} live products across ${sellersList.length.toLocaleString()} sellers from Metabase.`,
+      totalProducts: products.length,
+      totalSellers: sellersList.length,
+      syncedToSupabase,
       githubWorkflowTriggered,
-      latestLog,
       timestamp: new Date().toISOString(),
     });
   } catch (error) {

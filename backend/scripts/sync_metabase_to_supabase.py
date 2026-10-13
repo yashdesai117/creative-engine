@@ -194,6 +194,7 @@ def run_sync(sellers_only: bool = False):
                         "product_id": product_id,
                         "sku_id": sku_id,
                         "product_name": str(row.get("product_name") or "").strip(),
+                        "product_description": str(row.get("product_description") or "").strip() or None,
                         "size": row.get("size") or None,
                         "sku_colour": row.get("sku_colour") or None,
                         "cp": cp,
