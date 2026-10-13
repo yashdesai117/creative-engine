@@ -23,7 +23,47 @@ SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_KEY
 BATCH_SIZE = 500
 
 
-def run_sync():
+def sync_sellers_from_json(supabase: Client):
+    """Upserts all 16,899 sellers from backend/data/sellers.json directly into catalog_sellers."""
+    json_path = os.path.join(os.path.dirname(__file__), "..", "data", "sellers.json")
+    if not os.path.exists(json_path):
+        print(f"Warning: {json_path} not found.")
+        return 0
+
+    import json
+    with open(json_path, "r", encoding="utf-8") as f:
+        sellers_list = json.load(f)
+
+    print(f"Upserting {len(sellers_list)} pre-indexed sellers into Supabase catalog_sellers...")
+    total_synced = 0
+    for i in range(0, len(sellers_list), BATCH_SIZE):
+        batch = sellers_list[i : i + BATCH_SIZE]
+        records = [
+            {
+                "seller_id": s["seller_id"],
+                "seller_name": s["seller_name"],
+                "seller_website": s.get("seller_website") or None,
+                "product_count": s.get("product_count", 0),
+                "sample_image_url": s.get("sample_image") or None,
+                "categories": s.get("categories", []),
+                "updated_at": datetime.utcnow().isoformat(),
+            }
+            for s in batch
+        ]
+        try:
+            supabase.table("catalog_sellers").upsert(
+                records, on_conflict="seller_id"
+            ).execute()
+            total_synced += len(records)
+            print(f"  Upserted {total_synced}/{len(sellers_list)} sellers...")
+        except Exception as e:
+            print(f"  Error upserting sellers batch {i}: {e}")
+
+    print(f"Finished upserting {total_synced} sellers into catalog_sellers!")
+    return total_synced
+
+
+def run_sync(sellers_only: bool = False):
     print(f"[{datetime.utcnow().isoformat()}] Starting Metabase -> Supabase catalog sync...")
 
     if not SUPABASE_URL or not SUPABASE_KEY:
@@ -32,7 +72,13 @@ def run_sync():
 
     supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-    # 1. Start sync log
+    # 1. Upsert all 16,899 sellers first
+    sync_sellers_from_json(supabase)
+    if sellers_only:
+        print("Sellers-only sync requested. Exiting successfully.")
+        return True
+
+    # 2. Start sync log for full product streaming
     log_res = (
         supabase.table("metabase_sync_logs")
         .insert({"status": "running"})
@@ -44,6 +90,7 @@ def run_sync():
     total_rows = 0
     unique_sellers = {}
     products_batch = []
+
 
     try:
         req = urllib.request.Request(
@@ -172,4 +219,7 @@ def run_sync():
 
 
 if __name__ == "__main__":
-    run_sync()
+    import sys
+    sellers_only = "--sellers-only" in sys.argv
+    run_sync(sellers_only=sellers_only)
+

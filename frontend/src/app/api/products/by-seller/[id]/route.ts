@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getProductsBySeller } from "@/lib/metabase";
 
-
 export async function GET(
+
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
