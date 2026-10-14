@@ -46,13 +46,13 @@ class StoryboardService:
         """
         # 1. Hindi Voiceover Script (Devanagari) — Human-Writing Standard
         # Conversational, personal, honest reactions — zero promotional AI slop
-        hindi_hook = "सच बताना, कितनी बार चांदी का नेकलेस खरीद के पछताए हो? क्योंकि वो काला पड़ जाता है!"
-        hindi_agitation = "पसीना लगते ही स्किन हरी हो जाती है और चमक गायब। फिर वो सिर्फ बॉक्स में पड़ा रहता है।"
-        hindi_bridge = "गलती आपकी नहीं है — बाज़ार में सस्ती ब्रास मेटल पर चांदी की पतली पॉलिश चिपका देते हैं।"
-        hindi_promise = f"लेकिन {product.title} के साथ ऐसा बिल्कुल नहीं होता। मैं खुद इसे महीनों से पहन रही हूँ।"
+        hindi_hook = "डोंट जज मी, पर मैंने ये नेकलेस पहन के शावर ले लिया!"
+        hindi_agitation = "क्योंकि पिछली बार जो चेन्स ली थीं, वो दो दिन में ही पसीने से काली पड़ गई थीं और स्किन पर हरा निशान छोड़ दिया था।"
+        hindi_bridge = "गलती आपकी या मेरी नहीं है — बाज़ार में सस्ती ब्रास मेटल पर चांदी की पतली पॉलिश चिपका देते हैं। बट लुक एट दिस फिनिश।"
+        hindi_promise = f"लेकिन {product.title} के साथ ऐसा बिल्कुल नहीं होता। मैं खुद इसे हफ़्तों से रोज़ पहन रही हूँ।"
         hindi_mechanism = "इसका बेस असली 925 स्टर्लिंग सिल्वर है, जिसपर रोडियम की कोटिंग है जो कभी काली नहीं पड़ती।"
-        hindi_objection_proof = "चाहे वर्कआउट हो या ऑफिस, स्किन पर कोई रैश नहीं होता। 12 हज़ार से ज़्यादा लड़कियाँ इसे पहन रही हैं।"
-        hindi_offer_cta = f"वेबसाइट पर अभी फ्लैट {product.discount_percent:.0f}% ऑफ है, सिर्फ ₹{product.sp:.0f} में। 7 दिन की एक्सचेंज गारंटी भी है — लिंक नीचे है!"
+        hindi_objection_proof = "जिम हो या शावर, स्किन पर कोई रैश नहीं होता। 12 हज़ार से ज़्यादा लड़कियाँ इसे पहन रही हैं।"
+        hindi_offer_cta = f"वेबसाइट पर अभी फ्लैट {product.discount_percent:.0f}% ऑफ में सिर्फ ₹{product.sp:.0f} का मिल रहा है, 7-दिन की कम्प्लीट एक्सचेंज गारंटी के साथ। अभी नीचे टैप करके अपना सेट सिक्योर कर लो!"
 
         full_hindi = f"{hindi_hook} {hindi_agitation} {hindi_bridge} {hindi_promise} {hindi_mechanism} {hindi_objection_proof} {hindi_offer_cta}"
 
@@ -60,17 +60,17 @@ class StoryboardService:
         hook_audio = (
             summary.hook_layers.audio
             if summary.hook_layers and summary.hook_layers.audio
-            else "Honestly, how many times have you regretted buying a silver necklace because it turns black?"
+            else "Don't judge me, but I literally took a shower wearing this layered necklace..."
         )
 
         problem_text = (
-            f"If you're dealing with {candidate.problem.lower()}, cheap jewellery tarnishes and leaves ugly green marks on your skin."
+            f"If you're dealing with {candidate.problem.lower()}, cheap chains tarnish and leave ugly green marks on your skin within days."
         )
 
         bridge_text = (
             summary.bridge
             if summary.bridge
-            else "It's not your skin's fault — most brands just wash thin silver over cheap brass."
+            else "It's not your skin's fault — most brands just wash thin silver over cheap brass. But look at this finish."
         )
 
         promise_text = (
@@ -84,7 +84,7 @@ class StoryboardService:
         objection_text = "Completely hypoallergenic and nickel-free, even for super sensitive skin."
         proof_text = "Over 12,000+ verified customer reviews across India."
         offer_text = f"Flat {product.discount_percent:.0f}% off today at ₹{product.sp:.0f} with premium gift box."
-        risk_cta_text = "7-day risk-free exchange guarantee. Tap below to grab yours!"
+        risk_cta_text = f"7-day risk-free exchange guarantee with flat {product.discount_percent:.0f}% off at ₹{product.sp:.0f}. Tap the link below to secure your 3-layer set before this batch sells out!"
 
         return NineBeatScript(
             hook=hook_audio,
@@ -118,12 +118,12 @@ class StoryboardService:
 
         scenes = [
             # ─────────────────────────────────────────────────────────────────
-            # PART 1 (0–9 Seconds): HOOK & PROBLEM — PRODUCT VISIBLE FROM SECOND 0
+            # PART 1 (0–9 Seconds): HOOK & THE BRIDGE (AVOID ABRUPT PRODUCT DROP)
             # ─────────────────────────────────────────────────────────────────
             StoryboardScene(
                 scene_number=1,
                 part_number=1,
-                beat_name="Part 1 (0–9s): The 3-Layer Hook & Product Introduction",
+                beat_name="Part 1 (0–9s): The 3-Layer Hook & The Problem Bridge",
                 duration_seconds=9.0,
                 keyframe_image_prompt=(
                     f"Photorealistic 8k vertical keyframe (9:16) for Midjourney / Nano Banana / Flux: "
@@ -132,28 +132,28 @@ class StoryboardService:
                     f"She is seated at a wooden dressing table mirror in a sunlit Bangalore bedroom (soft 4500K morning daylight). "
                     f"SHE IS ALREADY WEARING the {product.title} on her collarbone: EXACTLY 3 delicate sterling silver chains (16\", 18\", 20\") "
                     f"with 1 tiny crescent moon pendant and 1 tiny star pendant (STRICT MATCH to reference image GCNK-221, NO extra chains, NO coin charms). "
-                    f"She looks into the mirror touching the dainty moon pendant with an inquiring, thoughtful expression. 35mm f/1.8 lens, natural pores, zero plastic wax sheen."
+                    f"She touches the moon pendant gently, looking into the mirror with an amused, candid confession expression. 35mm f/1.8 lens, natural pores, zero plastic wax sheen."
                 ),
                 video_motion_prompt=(
                     f"Google Veo / Flow Image-to-Video prompt: "
                     f"Animate from Keyframe 1. {character.name} touches the layered necklace on her collarbone in the mirror (0-2s), "
-                    f"then turns warmly to camera at 2.5s smiling engagingly as she speaks Part 1 dialogue. "
-                    f"Conversational gentle handheld camera, natural lip sync, speech finishes comfortably at 6.0s leaving 3.0s visual buffer. "
+                    f"then turns warmly to camera at 2.5s with a playful, candid smile as she speaks Part 1 dialogue. "
+                    f"Conversational gentle handheld camera, natural lip sync, speech finishes comfortably at 7.2s leaving 1.8s visual buffer. "
                     f"NO product changing, NO extra chain layers. 24fps cinematic realism."
                 ),
                 visual_prompt=(
                     f"Single continuous environment: Sunlit Bangalore bedroom vanity. "
                     f"{character.name} in solid lilac linen shirt with maroon bindi, wearing {product.title} (3 fine chains, moon and star charms). "
-                    f"Turns to camera and gestures to the necklace on her neck. Warm natural lighting, 9:16 vertical."
+                    f"Turns to camera and gestures candidly to the necklace on her neck. Warm natural lighting, 9:16 vertical."
                 ),
                 spoken_audio_hindi=(
-                    "सच बताना, कितनी बार चांदी का नेकलेस खरीद के पछताए हो? क्योंकि वो काला पड़ जाता है!"
+                    "डोंट जज मी, पर मैंने ये पहन के शावर ले लिया... क्योंकि पुरानी चेन्स दो दिन में ही काली पड़ जाती थीं! बट लुक एट दिस फिनिश।"
                 ),
                 spoken_audio_hinglish=(
-                    "Sach batana, kitni baar chandi ka necklace khareed ke pachtaye ho? Kyunki woh kaala pad jaata hai!"
+                    "Don't judge me, par maine yeh pehen ke shower le liya... kyunki purani chains 2 din mein hi kaali pad jaati thi! But look at this finish."
                 ),
-                spoken_audio=f"{script.hook} {script.problem_agitation}",
-                text_overlay="लेयर्ड चांदी काली पड़ने का डर? ❌",
+                spoken_audio=f"{script.hook} {script.bridge}",
+                text_overlay="डोंट जज मी... 🚿❌",
                 camera_motion="Conversational handheld eye-level, gentle punch-in at 2.5s to collarbone",
                 technical_consistency_anchors=(
                     f"Character Seed: {character.name}_{character.id} (maroon bindi, wavy hair) | "
@@ -163,12 +163,12 @@ class StoryboardService:
                 ),
             ),
             # ─────────────────────────────────────────────────────────────────
-            # PART 2 (9–18 Seconds): EXACT SAME SCENE — HALLMARK PROOF & OFFER CTA
+            # PART 2 (9–18 Seconds): EXACT SAME SCENE — MECHANISM & MEANINGFUL CTA
             # ─────────────────────────────────────────────────────────────────
             StoryboardScene(
                 scene_number=2,
                 part_number=2,
-                beat_name="Part 2 (9–18s): 925 Hallmark Proof, Rhodium Shield & Offer CTA",
+                beat_name="Part 2 (9–18s): 925 Hallmark Mechanism & Meaningful Risk-Reversal CTA",
                 duration_seconds=9.0,
                 keyframe_image_prompt=(
                     f"Photorealistic 8k vertical keyframe (9:16) for Midjourney / Nano Banana / Flux: "
@@ -183,22 +183,22 @@ class StoryboardService:
                     f"Google Veo / Flow Image-to-Video prompt: "
                     f"Animate from Keyframe 2. MATCHING SCENE CONTINUITY: Camera glides across the sharp '925' hallmark stamp and gleaming silver chains (0-3s), "
                     f"then tilts smoothly up to {character.name}'s smiling face (3-5s) as she delivers Part 2 dialogue in the same lilac shirt. "
-                    f"Speech completes cleanly at 6.2s. At 7s she gestures warmly down towards the offer badge. "
-                    f"Graphic overlay appears: 'FLAT {product.discount_percent:.0f}% OFF · ₹{product.sp:.0f}'. 24fps cinematic realism."
+                    f"Speech completes cleanly at 7.4s. At 7.8s she gestures warmly down towards the offer badge. "
+                    f"Graphic overlay appears: 'FLAT {product.discount_percent:.0f}% OFF · ₹{product.sp:.0f} · 7-DAY GUARANTEE'. 24fps cinematic realism."
                 ),
                 visual_prompt=(
                     f"SAME ROOM & OUTFIT CONTINUITY: Close-up on 925 hallmark stamp on Ananya's neck, "
                     f"tilts to her confident smile in same room, wearing same lilac shirt. "
-                    f"Animated lower-third offer badge: Flat {product.discount_percent:.0f}% OFF · ₹{product.sp:.0f}."
+                    f"Animated lower-third offer badge: Flat {product.discount_percent:.0f}% OFF · ₹{product.sp:.0f} · 7-Day Exchange Guarantee."
                 ),
                 spoken_audio_hindi=(
-                    f"पर ये असली 925 सिल्वर है, रोडियम कोटेड। मैं रोज़ पहनती हूँ, और सिर्फ ₹{product.sp:.0f} का है।"
+                    f"ये रियल 925 सिल्वर है विथ रोडियम—ज़ीरो टार्निश! वेबसाइट पर अभी फ्लैट {product.discount_percent:.0f}% ऑफ में सिर्फ ₹{product.sp:.0f} का है, 7-दिन की एक्सचेंज गारंटी के साथ। अभी नीचे टैप करके अपना सेट सिक्योर कर लो!"
                 ),
                 spoken_audio_hinglish=(
-                    f"Par yeh asli 925 silver hai, rhodium coated. Main roz pehenti hoon, aur sirf Rs. {product.sp:.0f} ka hai."
+                    f"Yeh real 925 silver hai with rhodium—zero tarnish! Website pe abhi flat {product.discount_percent:.0f}% off mein sirf Rs. {product.sp:.0f} ka hai, 7-day exchange guarantee ke saath. Abhi neeche tap karke apna set secure kar lo!"
                 ),
                 spoken_audio=f"{script.mechanism} {script.offer} {script.risk_reversal_cta}",
-                text_overlay=f"100% Rhodium 925 Silver ✨ • Flat {product.discount_percent:.0f}% Off • सिर्फ ₹{product.sp:.0f} 👇",
+                text_overlay=f"Real 925 Silver ✨ • Flat {product.discount_percent:.0f}% Off • सिर्फ ₹{product.sp:.0f} • 7-Day Guarantee 👇",
                 camera_motion="Macro punch on 925 hallmark, smooth tilt up to hero smile and tap gesture",
                 technical_consistency_anchors=(
                     f"SAME CHARACTER: {character.name}_{character.id} with lilac shirt & maroon bindi | "

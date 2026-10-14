@@ -454,46 +454,46 @@ PRODUCT ANCHOR (ZERO PRODUCT SWAPS — VISIBLE FROM SECOND 0):
 - Strict Rule: DO NOT switch to a different necklace. DO NOT add extra chains or coin charms. Worn by Ananya across both parts.
 
 ────────────────────────────────────────────────────────────────────────────────
-PART 1 (0–9 SECONDS) — HOOK & PROBLEM: PRODUCT VISIBLE ON COLLARBONE FROM 0s
+PART 1 (0–9 SECONDS) — HOOK & THE BRIDGE (AVOID ABRUPT PRODUCT DROP)
 ────────────────────────────────────────────────────────────────────────────────
 • Visual Prompt (Veo / Google Flow / Kling):
-  "CONTINUOUS SINGLE SCENE: Ananya ([ANANYA_IND_26_LILAC_SHIRT_BINDI_VANITY]) is seated at her wooden vanity mirror in a sunlit Bangalore bedroom. She is ALREADY WEARING the GlowCraft 925 Silver Layered Necklace (strictly 3 fine silver chains with tiny moon & star charms, no coin charms) against her collarbone. At 0-2s she looks into the mirror gently touching the dainty silver moon pendant with an inquiring, thoughtful expression. At 2.5s she turns smoothly to camera with a warm, relatable smile and begins speaking directly to the viewer. Conversational gentle handheld camera, natural lip sync. Speech finishes comfortably at 6.0s, leaving 3.0s buffer of her confident smile and necklace gleam. No rushed movement, no product morphing. 24fps cinematic realism."
+  "CONTINUOUS SINGLE SCENE: Ananya ([ANANYA_IND_26_LILAC_SHIRT_BINDI_VANITY]) is seated at her wooden vanity mirror in a sunlit Bangalore bedroom. She is ALREADY WEARING the GlowCraft 925 Silver Layered Necklace (strictly 3 fine silver chains with tiny moon & star charms, no coin charms) against her collarbone. At 0-2s she looks into the mirror touching the dainty silver moon pendant with an amused, candid confession expression. At 2.5s she turns smoothly to camera with a warm, playful smile and begins speaking directly to the viewer. Conversational gentle handheld camera, natural lip sync. Speech finishes comfortably at 7.2s, leaving 1.8s buffer of her confident smile and necklace gleam. No rushed movement, no product morphing. 24fps cinematic realism."
 
-• Spoken Dialogue / Voiceover (Strict 13 Words · 4.8 Seconds Natural Speech Pacing):
-  "सच बताना, कितनी बार चांदी का नेकलेस खरीद के पछताए हो? क्योंकि वो काला पड़ जाता है!"
+• Spoken Dialogue / Voiceover (Conversational Hinglish · Seamless Bridge):
+  "डोंट जज मी, पर मैंने ये पहन के शावर ले लिया... क्योंकि पुरानी चेन्स दो दिन में ही काली पड़ जाती थीं! बट लुक एट दिस फिनिश।"
 
 • Phonetic Transliteration (for voice artist / TTS reference):
-  "Sach batana, kitni baar chandi ka necklace khareed ke pachtaye ho? Kyunki woh kaala pad jaata hai!"
+  "Don't judge me, par maine yeh pehen ke shower le liya... kyunki purani chains 2 din mein hi kaali pad jaati thi! But look at this finish."
 
 • English Meaning:
-  "Be honest, how many times have you regretted buying a silver necklace because it turns black?"
+  "Don't judge me, but I literally showered with this necklace... because cheap chains turn black in two days! But look at this finish."
 
 • On-Screen Text Overlay (Safe Zone):
-  "चांदी खरीद के पछताए हो? ❌" (Bold high-contrast subtitle)
+  "डोंट जज मी... 🚿❌" (Bold high-contrast subtitle)
 
 • Camera Motion: Conversational eye-level, gentle punch-in at 2.5s to collarbone.
-• Duration: 9.0 seconds (Speech: 4.8s | Buffer: 4.2s).
+• Duration: 9.0 seconds (Speech: 7.2s | Buffer: 1.8s).
 
 ────────────────────────────────────────────────────────────────────────────────
-PART 2 (9–18 SECONDS) — EXACT SAME ROOM & OUTFIT: 925 HALLMARK PROOF & OFFER CTA
+PART 2 (9–18 SECONDS) — MECHANISM, PROOF & MEANINGFUL RISK-REVERSAL CTA
 ────────────────────────────────────────────────────────────────────────────────
 • Visual Prompt (Veo / Google Flow / Kling):
-  "MATCHING SCENE CONTINUITY: Exact same sunlit Bangalore bedroom, exact same lighting (4500K), exact same Ananya ([ANANYA_IND_26_LILAC_SHIRT_BINDI_VANITY]) wearing the exact same lilac linen shirt with maroon bindi. Starts with a close-up on her collarbone (0-3s) as she gently tilts the necklace clasp/pendant towards camera showing the razor-sharp laser-engraved '925' hallmark stamp with high-mirror rhodium shine. At 3.5s camera tilts smoothly up to Ananya's face as she speaks Part 2 dialogue with radiant confidence. Speech finishes cleanly at 6.0s. At 7.0s she gestures warmly down towards the offer sticker. Lower-third animated badge: 'FLAT 60% OFF · ₹599 · 7-DAY GUARANTEE'. 24fps cinematic realism."
+  "MATCHING SCENE CONTINUITY: Exact same sunlit Bangalore bedroom, exact same lighting (4500K), exact same Ananya ([ANANYA_IND_26_LILAC_SHIRT_BINDI_VANITY]) wearing the exact same lilac linen shirt with maroon bindi. Starts with a close-up on her collarbone (0-3s) as she gently tilts the necklace clasp/pendant towards camera showing the razor-sharp laser-engraved '925' hallmark stamp with high-mirror rhodium shine. At 3.0s camera tilts smoothly up to Ananya's face as she speaks Part 2 dialogue with radiant confidence. Speech finishes cleanly at 7.4s. At 7.8s she gestures warmly down towards the offer sticker. Lower-third animated badge: 'FLAT 60% OFF · ₹599 · 7-DAY GUARANTEE'. 24fps cinematic realism."
 
-• Spoken Dialogue / Voiceover (Strict 14 Words · 5.0 Seconds Natural Speech Pacing):
-  "पर ये असली 925 सिल्वर है, रोडियम कोटेड। मैं रोज़ पहनती हूँ, और सिर्फ ₹599 का है।"
+• Spoken Dialogue / Voiceover (Conversational Hinglish · Meaningful CTA):
+  "ये रियल 925 सिल्वर है विथ रोडियम—ज़ीरो टार्निश! वेबसाइट पर अभी फ्लैट 60% ऑफ में सिर्फ ₹599 का है, 7-दिन की एक्सचेंज गारंटी के साथ। अभी नीचे टैप करके अपना सेट सिक्योर कर लो!"
 
 • Phonetic Transliteration (for voice artist / TTS reference):
-  "Par yeh asli 925 silver hai, rhodium coated. Main roz pehenti hoon, aur sirf Rs. 599 ka hai."
+  "Yeh real 925 silver hai with rhodium—zero tarnish! Website pe abhi flat 60% off mein sirf Rs. 599 ka hai, 7-day exchange guarantee ke saath. Abhi neeche tap karke apna set secure kar lo!"
 
 • English Meaning:
-  "But this is real 925 silver, rhodium coated. I wear it everyday, and it's literally just ₹599."
+  "This is real 925 silver with rhodium—zero tarnish! It's flat 60% off at just ₹599 on the site right now with a 7-day exchange guarantee. Tap below to secure your set!"
 
 • On-Screen Text Overlay (Safe Zone):
-  "100% Rhodium 925 Silver ✨ • Flat 60% OFF • सिर्फ ₹599 👇"
+  "Real 925 Silver ✨ • Flat 60% OFF • सिर्फ ₹599 • 7-Day Guarantee 👇"
 
 • Camera Motion: Macro punch on 925 hallmark, smooth tilt up to hero smile and tap gesture.
-• Duration: 9.0 seconds (Speech: 5.2s | Buffer: 3.8s).
+• Duration: 9.0 seconds (Speech: 7.4s | Buffer: 1.6s).
 ================================================================================`;
 
 export const MOCK_STORYBOARD_IMAGE_PROMPT = `================================================================================
