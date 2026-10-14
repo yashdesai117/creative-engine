@@ -264,78 +264,15 @@ class MetabaseService:
         if seller_id:
             seller_products = [p for p in items if p["seller_id"] == seller_id]
             for p in seller_products:
-                if p["product_id"].lower() in clean_link.lower():
+                if p["product_id"].lower() in clean_link.lower() or (p.get("sku_id") and p["sku_id"].lower() in clean_link.lower()):
                     return p
-            if seller_products:
-                return seller_products[0]
+            # If user ONLY searched for a seller ID without a specific product URL:
+            if not clean_link or clean_link.lower() == seller_id.lower():
+                if seller_products:
+                    return seller_products[0]
 
-        # 5. Catalog fallback matching any of the 16,899 sellers
-        self._load_sellers_from_disk()
-        clean_lower = clean_link.lower()
-        matched_seller = next(
-            (
-                s for s in self._sellers_cache
-                if (seller_id and s["seller_id"] == seller_id)
-                or (s.get("seller_website") and s["seller_website"].lower() in clean_lower)
-            ),
-            None,
-        )
-        if matched_seller:
-            url_slug = clean_link.split("/")[-1].replace("-", " ").replace("_", " ") if "/" in clean_link else ""
-            inferred_name = url_slug.title() if url_slug and len(url_slug) > 3 else f"{matched_seller['seller_name']} Featured Item"
-            return {
-                "seller_id": matched_seller["seller_id"],
-                "seller_name": matched_seller["seller_name"],
-                "seller_website": matched_seller.get("seller_website", ""),
-                "website_product_link": clean_link,
-                "product_id": f"PROD-{matched_seller['seller_id'][:6]}",
-                "product_name": inferred_name,
-                "sku_id": f"SKU-{matched_seller['seller_id'][:6]}",
-                "size": "Standard",
-                "sku_colour": "Default",
-                "cp": 399.0,
-                "sp": 999.0,
-                "mrp": 1999.0,
-                "discount_percent": 50.0,
-                "margin_percent": 60.0,
-                "quantity": 50,
-                "lifetime_sales": 50000.0,
-                "lifetime_orders": 50,
-                "is_oos": False,
-                "category": matched_seller.get("categories", ["General"])[0] if matched_seller.get("categories") else "General",
-                "sub_category": matched_seller.get("categories", [""])[1] if len(matched_seller.get("categories", [])) > 1 else "",
-                "product_type": "standard",
-                "image_link": matched_seller.get("sample_image", ""),
-            }
 
-        # 6. General fallback for arbitrary custom links/stores
-        domain = parsed.netloc.replace("www.", "").split(".")[0].title() or "ShopDeck Store"
-        slug = clean_link.split("/")[-1].replace("-", " ").replace("_", " ") if "/" in clean_link else "Featured Product"
-        inferred_title = slug.title() if len(slug) > 3 else f"{domain} Signature Item"
-
-        return {
-            "seller_id": seller_id or f"SD-{abs(hash(domain)) % 10000:04d}",
-            "seller_name": domain,
-            "seller_website": f"https://{parsed.netloc}" if parsed.netloc else "",
-            "website_product_link": clean_link,
-            "product_id": f"PROD-{abs(hash(clean_link)) % 100000:05d}",
-            "product_name": inferred_title,
-            "sku_id": f"SKU-{abs(hash(clean_link)) % 10000:04d}",
-            "size": "Standard",
-            "sku_colour": "Default",
-            "cp": 299.0,
-            "sp": 699.0,
-            "mrp": 1499.0,
-            "discount_percent": 53.4,
-            "margin_percent": 57.2,
-            "quantity": 100,
-            "lifetime_sales": 85000.0,
-            "lifetime_orders": 120,
-            "is_oos": False,
-            "category": "Jewellery" if "jewel" in clean_lower or "neck" in clean_lower else "Fashion & Apparel",
-            "sub_category": "Direct Response E-Commerce",
-            "product_type": "standard",
-            "image_link": "https://images.unsplash.com/photo-1602173574767-37ac01994b2a?w=800",
-        }
+        # If not found in Metabase catalog rows, return None so live page scraper handles it
+        return None
 
 

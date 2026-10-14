@@ -1,4 +1,6 @@
 import allSellersRaw from "./data/sellers.json";
+import { scrapeProductPage } from "./scraper";
+
 
 export interface MetabaseProduct {
   seller_id: string;
@@ -23,6 +25,7 @@ export interface MetabaseProduct {
   sub_category?: string;
   product_type?: string;
   image_link: string;
+  all_images?: string[];
   catalogue_updated_at?: string;
 }
 
@@ -319,37 +322,105 @@ export async function findProduct(
     }
   }
 
-  // 2. Search in-memory Metabase catalog
+  // 2. If input is a live product webpage URL, scrape it directly as the source of truth
+  const isUrl = clean.startsWith("http://") || clean.startsWith("https://");
   const products = await fetchMetabaseCatalog();
 
-  // (a) Exact link match
-  const exact = products.find(
-    (p) => p.website_product_link.trim().toLowerCase() === cleanLower
-  );
-  if (exact) return exact;
+  if (isUrl) {
+    try {
+      const scraped = await scrapeProductPage(clean);
+      if (scraped && scraped.title) {
+        // Find if this URL or domain is in our 16,899 sellers index
+        const matchedSeller = allSellersList.find(
+          (s) =>
+            (sellerId && s.seller_id === sellerId) ||
+            (s.seller_website && cleanLower.includes(s.seller_website.toLowerCase())) ||
+            (s.seller_name && cleanLower.includes(s.seller_name.toLowerCase()))
+        );
 
-  // (b) Normalized link match
-  const byNormLink = products.find(
-    (p) => normalizeUrl(p.website_product_link) === normalizedInput
-  );
-  if (byNormLink) return byNormLink;
+        // Check if there is an exact or normalized link match in the Metabase catalog
+        const dbMatch = products.find(
+          (p) =>
+            p.website_product_link.trim().toLowerCase() === cleanLower ||
+            normalizeUrl(p.website_product_link) === normalizedInput
+        );
 
-  // (c) Exact Product ID match
+        const effSellerName =
+          dbMatch?.seller_name ||
+          scraped.seller_name ||
+          (matchedSeller ? matchedSeller.seller_name : "ShopDeck Store");
+        const effSellerId =
+          dbMatch?.seller_id ||
+          sellerId ||
+          (matchedSeller ? matchedSeller.seller_id : `SD-${effSellerName.toUpperCase()}`);
+
+        const allImgs = scraped.images.map((img) => img.url);
+        if (dbMatch?.image_link && !allImgs.includes(dbMatch.image_link)) {
+          allImgs.unshift(dbMatch.image_link);
+        }
+
+        return {
+          seller_id: effSellerId,
+          seller_name: effSellerName,
+          seller_website: dbMatch?.seller_website || matchedSeller?.seller_website || clean,
+          website_product_link: clean,
+          product_id: dbMatch?.product_id || `PROD-${Date.now().toString().slice(-6)}`,
+          product_name: scraped.title,
+          product_description: scraped.description || dbMatch?.product_description || "",
+          sku_id: dbMatch?.sku_id || `SKU-${Date.now().toString().slice(-4)}`,
+          size: dbMatch?.size || "Standard",
+          sku_colour: dbMatch?.sku_colour || null,
+          cp: dbMatch?.cp || Math.round(scraped.sp * 0.4),
+          sp: scraped.sp > 0 ? scraped.sp : dbMatch?.sp || 499,
+          mrp: scraped.mrp > 0 ? scraped.mrp : dbMatch?.mrp || (scraped.sp ? scraped.sp * 2 : 999),
+          discount_percent: scraped.discount_percent || dbMatch?.discount_percent || 50,
+          quantity: dbMatch?.quantity || 100,
+          lifetime_sales: dbMatch?.lifetime_sales || 100000,
+          lifetime_orders: dbMatch?.lifetime_orders || 120,
+          is_oos: !scraped.is_in_stock,
+          category: scraped.category || dbMatch?.category || "General",
+          sub_category: dbMatch?.sub_category || "Direct Response E-Commerce",
+          product_type: dbMatch?.product_type || "standard",
+          image_link: allImgs[0] || dbMatch?.image_link || "",
+          all_images: allImgs,
+        };
+      }
+    } catch (e) {
+      console.warn("Live page scrape failed in findProduct:", e);
+    }
+
+    // If scraping failed (e.g. offline or blocked), fallback to exact link in Metabase
+    const exact = products.find(
+      (p) =>
+        p.website_product_link.trim().toLowerCase() === cleanLower ||
+        normalizeUrl(p.website_product_link) === normalizedInput
+    );
+    if (exact) {
+      return {
+        ...exact,
+        all_images: exact.image_link ? [exact.image_link] : [],
+      };
+    }
+  }
+
+  // 3. For non-URL inputs or fallback: match by exact Product ID or SKU ID
   const byPid = products.find(
-    (p) => p.product_id.toLowerCase() === cleanLower
+    (p) => p.product_id && p.product_id.toLowerCase() === cleanLower
   );
   if (byPid) return byPid;
 
-  // (d) Exact SKU ID match
   const bySku = products.find(
-    (p) => p.sku_id.toLowerCase() === cleanLower
+    (p) => p.sku_id && p.sku_id.toLowerCase() === cleanLower
   );
   if (bySku) return bySku;
 
-  // (e) Path segments match (e.g. MxYNDqJn or 5ZFw8u3A)
-  // (e) Path segments match (e.g. MxYNDqJn or 5ZFw8u3A)
+  // 4. Segment-based match (e.g. path containing product ID)
+  const IGNORED_SEGMENTS = new Set([
+    "catalogue", "catalog", "products", "product", "item", "items", "p", "c", "collections", "collection", "shop"
+  ]);
+
   for (const seg of segments) {
-    if (seg.length >= 3) {
+    if (seg.length >= 4 && !IGNORED_SEGMENTS.has(seg.toLowerCase())) {
       const segLower = seg.toLowerCase();
       const bySeg = products.find(
         (p) =>
@@ -360,31 +431,10 @@ export async function findProduct(
     }
   }
 
-  // (f) Normalized link suffix or prefix match (only when non-empty and long enough)
-  if (normalizedInput.length >= 8) {
-    const bySubLink = products.find((p) => {
-      if (!p.website_product_link || p.website_product_link.trim().length < 8) return false;
-      const pNorm = normalizeUrl(p.website_product_link);
-      if (pNorm.length < 8) return false;
-      return pNorm === normalizedInput || pNorm.endsWith(normalizedInput) || normalizedInput.endsWith(pNorm);
-    });
-    if (bySubLink) return bySubLink;
-  }
-
-  // (g) Product ID in URL path boundary (e.g. /MxYNDqJn/ or =MxYNDqJn)
-  const byPathPid = products.find((p) => {
-    if (!p.product_id || p.product_id.length < 3) return false;
-    const pidLower = p.product_id.toLowerCase();
-    const regex = new RegExp(`[/=]${pidLower}(?:[/\\?#]|$)`, "i");
-    return regex.test(cleanLower);
-  });
-  if (byPathPid) return byPathPid;
-
-  // (h) Seller-scoped match if sellerId is provided
+  // 5. If seller_id is provided, search products for that seller
   if (sellerId) {
     const sellerProds = products.filter((p) => p.seller_id === sellerId);
     if (sellerProds.length > 0) {
-      // Check if product_name matches query
       const byName = sellerProds.find((p) =>
         cleanLower.length >= 6 && p.product_name.toLowerCase().includes(cleanLower)
       );
@@ -392,76 +442,8 @@ export async function findProduct(
     }
   }
 
-  // (i) Full 16,899 sellers catalog fallback
-  const matchedSeller = allSellersList.find(
-    (s) =>
-      (sellerId && s.seller_id === sellerId) ||
-      (s.seller_website && cleanLower.includes(s.seller_website.toLowerCase())) ||
-      (s.seller_name && cleanLower.includes(s.seller_name.toLowerCase()))
-  );
-
-  if (matchedSeller) {
-    const slug = clean.split("/").filter(Boolean).pop()?.replace(/[-_]/g, " ") || "";
-    const inferredName = slug && slug.length > 3
-      ? slug.replace(/\b\w/g, (c) => c.toUpperCase())
-      : `${matchedSeller.seller_name} Featured Item`;
-
-    return {
-      seller_id: matchedSeller.seller_id,
-      seller_name: matchedSeller.seller_name,
-      seller_website: matchedSeller.seller_website,
-      website_product_link: clean,
-      product_id: `PROD-${matchedSeller.seller_id.slice(-6)}`,
-      product_name: inferredName,
-      product_description: `Authentic ${inferredName} from ${matchedSeller.seller_name}.`,
-      sku_id: `SKU-${matchedSeller.seller_id.slice(-4)}`,
-      size: "Standard",
-      sku_colour: "Default",
-      cp: 299,
-      sp: 699,
-      mrp: 1499,
-      discount_percent: 53.4,
-      quantity: 100,
-      lifetime_sales: 85000,
-      lifetime_orders: 120,
-      is_oos: false,
-      category: matchedSeller.categories?.[0] || "General",
-      sub_category: matchedSeller.categories?.[1] || "Direct Response E-Commerce",
-      product_type: "standard",
-      image_link: matchedSeller.sample_image || "https://images.unsplash.com/photo-1602173574767-37ac01994b2a?w=800",
-    };
-  }
-
-  // (j) Inferred product from URL for arbitrary links
-  const slug = clean.split("/").filter(Boolean).pop()?.replace(/[-_]/g, " ") || "";
-  const inferredTitle = slug && slug.length > 3
-    ? slug.replace(/\b\w/g, (c) => c.toUpperCase())
-    : "ShopDeck Catalog Product";
-
-  return {
-    seller_id: sellerId || "SD-4821",
-    seller_name: "ShopDeck Seller",
-    seller_website: clean,
-    website_product_link: clean,
-    product_id: `PROD-${Date.now().toString().slice(-6)}`,
-    product_name: inferredTitle,
-    product_description: `Authentic ${inferredTitle} direct response catalog product.`,
-    sku_id: `SKU-${Date.now().toString().slice(-4)}`,
-    size: "Standard",
-    sku_colour: "Default",
-    cp: 240,
-    sp: 599,
-    mrp: 1499,
-    discount_percent: 60,
-    quantity: 100,
-    lifetime_sales: 150000,
-    lifetime_orders: 200,
-    is_oos: false,
-    category: "Jewellery",
-    sub_category: "Direct Response E-Commerce",
-    product_type: "standard",
-    image_link: "https://images.unsplash.com/photo-1602173574767-37ac01994b2a?w=800",
-  };
-
+  // Strict: return null if product cannot be resolved, never fabricate mock data
+  return null;
 }
+
 

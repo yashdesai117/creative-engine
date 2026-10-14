@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { findProduct } from "@/lib/metabase";
 
 
+import { scrapeProductPage } from "@/lib/scraper";
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -16,12 +18,56 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const matched = await findProduct(productLink, sellerId);
+    let matched = await findProduct(productLink, sellerId);
+
+    // If not matched via Metabase catalog, try live page scrape directly
+    if (!matched && (productLink.startsWith("http://") || productLink.startsWith("https://"))) {
+      try {
+        const scraped = await scrapeProductPage(productLink);
+        if (scraped && scraped.title) {
+          return NextResponse.json({
+            seller_id: sellerId || `SD-${(scraped.seller_name || "STORE").toUpperCase()}`,
+            seller_name: scraped.seller_name || "ShopDeck Store",
+            product_id: `PROD-${Date.now().toString().slice(-6)}`,
+            sku_id: `SKU-${Date.now().toString().slice(-4)}`,
+            title: scraped.title,
+            description: scraped.description,
+            category: scraped.category,
+            sub_category: "Direct Response E-Commerce",
+            sp: scraped.sp,
+            mrp: scraped.mrp,
+            cp: Math.round(scraped.sp * 0.4),
+            discount_percent: scraped.discount_percent,
+            images: scraped.images,
+            variant: null,
+            is_in_stock: scraped.is_in_stock,
+            is_published: true,
+            field_sources: {
+              title: "fallback",
+              sp: "fallback",
+              mrp: "fallback",
+              category: "fallback",
+              images: "fallback",
+            },
+            fetched_at: new Date().toISOString(),
+          });
+        }
+      } catch (e) {
+        console.warn("Direct page scrape failed in route:", e);
+      }
+    }
 
     if (matched) {
       const desc =
         matched.product_description?.trim() ||
         `${matched.category}${matched.sub_category ? ` — ${matched.sub_category}` : ""}. SKU: ${matched.sku_id}`;
+
+      const imagesList =
+        matched.all_images && matched.all_images.length > 0
+          ? matched.all_images.map((u, i) => ({ url: u, alt: matched.product_name, isReference: i === 0 }))
+          : matched.image_link
+          ? [{ url: matched.image_link, alt: matched.product_name, isReference: true }]
+          : [];
 
       const product = {
         seller_id: matched.seller_id,
@@ -36,9 +82,7 @@ export async function POST(req: NextRequest) {
         mrp: matched.mrp,
         cp: matched.cp,
         discount_percent: matched.discount_percent,
-        images: matched.image_link
-          ? [{ url: matched.image_link, alt: matched.product_name, isReference: true }]
-          : [],
+        images: imagesList,
         variant: matched.size || matched.sku_colour || null,
         is_in_stock: !matched.is_oos,
         is_published: true,
@@ -55,52 +99,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(product);
     }
 
-    // Fallback: Infer product from link slug or return specimen product so user testing is never blocked
-    let inferredTitle = "ShopDeck Catalog Product";
-    try {
-      const url = new URL(productLink);
-      const slug = url.pathname.split("/").filter(Boolean).pop()?.replace(/[-_]/g, " ");
-      if (slug && slug.length > 3) {
-        inferredTitle = slug.replace(/\b\w/g, (c) => c.toUpperCase());
-      }
-    } catch {
-      // not a standard url
-    }
-
-    const fallbackProduct = {
-      seller_id: sellerId || "SD-4821",
-      seller_name: "ShopDeck Seller",
-      product_id: `PROD-${Date.now().toString().slice(-6)}`,
-      sku_id: `SKU-${Date.now().toString().slice(-4)}`,
-      title: inferredTitle,
-      description: `Authentic ${inferredTitle} direct response catalog product.`,
-      category: "Jewellery",
-      sub_category: "Direct Response E-Commerce",
-      sp: 599,
-      mrp: 1499,
-      cp: 240,
-      discount_percent: 60,
-      images: [
-        {
-          url: "https://images.unsplash.com/photo-1602173574767-37ac01994b2a?w=800",
-          alt: inferredTitle,
-          isReference: true,
-        },
-      ],
-      variant: null,
-      is_in_stock: true,
-      is_published: true,
-      field_sources: {
-        title: "database",
-        sp: "database",
-        mrp: "database",
-        category: "database",
-        images: "database",
+    return NextResponse.json(
+      {
+        error:
+          "Could not fetch product details from this link. Please check that the URL is an active, publicly accessible product page.",
       },
-      fetched_at: new Date().toISOString(),
-    };
+      { status: 404 }
+    );
 
-    return NextResponse.json(fallbackProduct);
   } catch (error) {
     console.error("API /api/products/resolve error:", error);
     return NextResponse.json(

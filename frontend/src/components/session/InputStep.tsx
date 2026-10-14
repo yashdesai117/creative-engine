@@ -63,10 +63,10 @@ const METABASE_PRESETS = [
     sellerId: "61cd544aa98b93b86090de16",
     sellerName: "GUJJU JEWELLERS",
     productLink: "https://gujjujewellers.com/catalogue/2iqyX3ic/d-O4L154",
-    productName: "Traditional Jewellery Set",
+    productName: "Stylish Gold Plated Chain",
     tag: "Jewellery",
-    sp: "₹1,299",
-    mrp: "₹2,999",
+    sp: "₹499",
+    mrp: "₹999",
   },
   {
     sellerId: "678a64450ea2498bc8aad8be",
@@ -81,10 +81,10 @@ const METABASE_PRESETS = [
     sellerId: "658406a1b69e050d10a44bbf",
     sellerName: "shreenathji Jewellery",
     productLink: "https://thekalyanijewellers.com/catalogue/ITOdBJO0/hr4AS4sh",
-    productName: "Silver Layered Necklace",
+    productName: "Fancy Long Ball Mala",
     tag: "Jewellery",
-    sp: "₹899",
-    mrp: "₹1,899",
+    sp: "₹449",
+    mrp: "₹899",
   },
 ];
 
@@ -202,7 +202,7 @@ export function InputStep() {
 
   // If user enters a productLink, check if it matches in the current seller's products or preview
   useEffect(() => {
-    if (!inputForm.productLink) {
+    if (!inputForm.productLink || !isValidUrl(inputForm.productLink)) {
       setPreviewProduct(null);
       return;
     }
@@ -213,8 +213,58 @@ export function InputStep() {
     );
     if (matched) {
       setPreviewProduct(matched);
+      return;
     }
-  }, [inputForm.productLink, sellerProducts]);
+
+    let isMounted = true;
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch("/api/products/resolve", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            productLink: inputForm.productLink,
+            sellerId: inputForm.sellerId,
+          }),
+        });
+        if (res.ok && isMounted) {
+          const data = await res.json();
+          if (data && data.title) {
+            setPreviewProduct({
+              seller_id: data.seller_id,
+              seller_name: data.seller_name,
+              seller_website: inputForm.productLink,
+              website_product_link: inputForm.productLink,
+              product_id: data.product_id,
+              product_name: data.title,
+              product_description: data.description || "",
+              sku_id: data.sku_id || "",
+              cp: data.cp || 0,
+              sp: data.sp || 0,
+              mrp: data.mrp || 0,
+              discount_percent: data.discount_percent || 0,
+              quantity: 100,
+              lifetime_sales: 0,
+              lifetime_orders: 0,
+              is_oos: !data.is_in_stock,
+              category: data.category || "General",
+              sub_category: data.sub_category || "",
+              product_type: "standard",
+              image_link: data.images?.[0]?.url || "",
+              all_images: Array.isArray(data.images) ? data.images.map((img: { url: string }) => img.url) : [],
+            });
+          }
+        }
+      } catch (err) {
+        // silent preview fallback
+      }
+    }, 400);
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+    };
+  }, [inputForm.productLink, inputForm.sellerId, sellerProducts]);
 
   // Filtered sellers
   const filteredSellers = useMemo(() => {
@@ -391,6 +441,28 @@ export function InputStep() {
                 }
                 value={sellerSearch || inputForm.sellerId}
                 onChange={(e) => {
+                  const val = e.target.value.trim();
+                  // Smart detection: user pasted a product link into the seller field
+                  if (val.startsWith("http://") || val.startsWith("https://")) {
+                    setInputField("productLink", val);
+                    try {
+                      const host = new URL(val).hostname.replace(/^www\./, "").split(".")[0];
+                      const matched = sellers.find(
+                        (s) =>
+                          s.seller_website.toLowerCase().includes(host.toLowerCase()) ||
+                          s.seller_name.toLowerCase().includes(host.toLowerCase())
+                      );
+                      if (matched) {
+                        setInputField("sellerId", matched.seller_id);
+                        setSellerSearch(matched.seller_name);
+                      } else {
+                        setInputField("sellerId", `SD-${host.toUpperCase()}`);
+                        setSellerSearch(host.charAt(0).toUpperCase() + host.slice(1));
+                      }
+                    } catch {}
+                    setTouched({ sellerId: true, productLink: true });
+                    return;
+                  }
                   setSellerSearch(e.target.value);
                   setInputField("sellerId", e.target.value);
                   setIsSellerDropdownOpen(true);
@@ -494,7 +566,30 @@ export function InputStep() {
                 type="url"
                 placeholder="https://themantrust.com/catalogue/MxYNDqJn/5ZFw8u3A"
                 value={inputForm.productLink}
-                onChange={(e) => setInputField("productLink", e.target.value)}
+                onChange={(e) => {
+                  const val = e.target.value.trim();
+                  setInputField("productLink", val);
+                  if (val.startsWith("http://") || val.startsWith("https://")) {
+                    try {
+                      const host = new URL(val).hostname.replace(/^www\./, "").split(".")[0];
+                      if (!inputForm.sellerId || inputForm.sellerId.length < 3) {
+                        const matched = sellers.find(
+                          (s) =>
+                            s.seller_website.toLowerCase().includes(host.toLowerCase()) ||
+                            s.seller_name.toLowerCase().includes(host.toLowerCase())
+                        );
+                        if (matched) {
+                          setInputField("sellerId", matched.seller_id);
+                          setSellerSearch(matched.seller_name);
+                        } else {
+                          setInputField("sellerId", `SD-${host.toUpperCase()}`);
+                          setSellerSearch(host.charAt(0).toUpperCase() + host.slice(1));
+                        }
+                        setTouched((t) => ({ ...t, sellerId: true }));
+                      }
+                    } catch {}
+                  }
+                }}
                 onBlur={() => setTouched((t) => ({ ...t, productLink: true }))}
                 className={`input w-full ${
                   touched.productLink && !isLinkValid && inputForm.productLink
