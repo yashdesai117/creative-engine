@@ -2,16 +2,27 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import { useParams } from "next/navigation";
 import { ChevronLeft, Sparkles, Copy, Download, CheckCircle2, Clock } from "lucide-react";
-import { MOCK_SESSIONS, MOCK_OPTIONS, MOCK_PROMPT } from "@/lib/mock-data";
+import {
+  MOCK_SESSIONS,
+  MOCK_OPTIONS,
+  MOCK_PROMPT,
+  MOCK_BANNER_PROMPT,
+  MOCK_VIDEO_PROMPT_2PARTS,
+} from "@/lib/mock-data";
 import { getRelativeTime, formatCurrency, cn } from "@/lib/utils";
 
 function SessionDetailContent() {
   const params = useParams();
   const id = typeof params?.id === "string" ? params.id : Array.isArray(params?.id) ? params.id[0] : "";
   const session = MOCK_SESSIONS.find((s) => s.id === id);
+
+  const [activePromptTab, setActivePromptTab] = useState<"banner" | "video">(
+    session?.format === "video" ? "video" : "banner"
+  );
+  const [copied, setCopied] = useState(false);
 
   if (!session) {
     return (
@@ -101,32 +112,73 @@ function SessionDetailContent() {
           </motion.div>
         )}
 
-        {/* Sample concept */}
-        <div className="glass-card rounded-2xl overflow-hidden">
-          <div className="px-6 py-5 border-b border-[rgba(99,102,241,0.1)]">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-[10px] font-mono text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded">
-                CONCEPT 01
-              </span>
-              <span className="text-[10px] font-medium text-emerald-400">✓ Approved</span>
+        {/* Format Selector / Tabs for Specimen Mock Prompts */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold text-[rgba(255,255,255,0.6)] uppercase tracking-wider">
+              Specimen Mock Prompts:
+            </span>
+            <button
+              onClick={() => setActivePromptTab("banner")}
+              className={cn(
+                "px-3 py-1.5 rounded-lg text-xs font-semibold transition-all",
+                activePromptTab === "banner"
+                  ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/25"
+                  : "bg-white/5 text-[rgba(255,255,255,0.6)] hover:bg-white/10"
+              )}
+            >
+              🖼️ Banner Ad Prompt (1:1 / 4:5)
+            </button>
+            <button
+              onClick={() => setActivePromptTab("video")}
+              className={cn(
+                "px-3 py-1.5 rounded-lg text-xs font-semibold transition-all",
+                activePromptTab === "video"
+                  ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/25"
+                  : "bg-white/5 text-[rgba(255,255,255,0.6)] hover:bg-white/10"
+              )}
+            >
+              🎬 2-Part Video Prompt (Veo / Flow 8-10s)
+            </button>
+          </div>
+          <span className="text-xs text-indigo-400 font-mono">
+            {activePromptTab === "video" ? "Max 2 Parts · Hindi VO · 9:16" : "Safe Zones · 925 Hallmark · 1:1"}
+          </span>
+        </div>
+
+        {/* Specimen concept card */}
+        <div className="glass-card rounded-2xl overflow-hidden mb-8">
+          <div className="px-6 py-5 border-b border-[rgba(99,102,241,0.1)] flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-[10px] font-mono text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded">
+                  {activePromptTab === "video" ? "SPECIMEN VIDEO PROMPT" : "SPECIMEN BANNER PROMPT"}
+                </span>
+                <span className="text-[10px] font-medium text-emerald-400">✓ Ready to copy into Veo / Grok / Kling</span>
+              </div>
+              <p className="text-base font-bold text-white">
+                {activePromptTab === "video"
+                  ? "2-Part Indian Creator Reel (0–9s Hook & Bridge + 9–18s Mechanism & Offer)"
+                  : "Product Hero & Problem-Solution Square Banner (GlowCraft 925 Silver)"}
+              </p>
             </div>
-            <p className="text-base font-bold text-white">
-              "Green neck from cheap jewellery? Never again."
-            </p>
+            <button
+              onClick={() => {
+                const textToCopy = activePromptTab === "video" ? MOCK_VIDEO_PROMPT_2PARTS : MOCK_BANNER_PROMPT;
+                navigator.clipboard.writeText(textToCopy);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+              }}
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl text-sm font-semibold hover:opacity-95 transition-opacity"
+            >
+              <Copy className="w-4 h-4" />
+              {copied ? "Copied!" : "Copy Specimen Prompt"}
+            </button>
           </div>
           <div className="px-6 py-4">
-            <div className="prompt-textarea min-h-[200px] text-sm">
-              {MOCK_PROMPT}
-            </div>
-            <div className="mt-3 flex justify-end">
-              <button
-                onClick={() => navigator.clipboard.writeText(MOCK_PROMPT)}
-                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-xl text-sm font-semibold"
-              >
-                <Copy className="w-4 h-4" />
-                Copy Prompt
-              </button>
-            </div>
+            <pre className="prompt-textarea min-h-[300px] text-xs font-mono whitespace-pre-wrap leading-relaxed text-[rgba(255,255,255,0.85)] bg-black/40 p-4 rounded-xl border border-white/5 overflow-x-auto">
+              {activePromptTab === "video" ? MOCK_VIDEO_PROMPT_2PARTS : MOCK_BANNER_PROMPT}
+            </pre>
           </div>
         </div>
       </main>

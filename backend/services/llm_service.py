@@ -104,6 +104,11 @@ class LLMService:
     ) -> str:
         return f"""Generate {n_options} distinct creative concepts for this product and template.
 
+META ANDROMEDA & CONCEPT ARCHITECTURE:
+- Under Meta Andromeda, creative IS targeting in vector space.
+- Distinct concepts require distinct combinations of: Persona × Problem × Angle × Offer.
+- Changing only the text or image while keeping the same persona/angle triggers Meta's Creative Similarity Penalty.
+
 PRODUCT:
 - Title: {product.title}
 - Category: {product.category}
@@ -125,14 +130,13 @@ ECONOMICS GUARDRAILS:
 - Offer types allowed: percentage off, bundle, free shipping, prepaid incentive, limited-time
 
 REQUIREMENTS:
-1. Each concept must have a materially different Problem, Angle, and Offer
-2. Problems must be hyper-specific — not generic categories but concrete situations
-3. Angles must name the component(s) used: Problem Agitation, Contrarian Truth, Social Proof/Domain Authority, Curiosity Gap, Comparison/Objection Handling, Transformation
-4. Offers must stay within margin guardrails
-5. For desire/identity categories (jewellery, fashion, gifting), Problem may be framed as a desire or aspiration
-6. Never overpromise or make claims not supported by the product description
+1. Specify an authentic Indian Persona (demographics, psychographics, context)
+2. State the Eugene Schwartz awareness stage (unaware, problem_aware, solution_aware, product_aware, most_aware)
+3. Problems must be hyper-specific — not generic categories but concrete situations
+4. Angles must name the component(s) used: Problem Agitation, Contrarian Truth, Social Proof/Domain Authority, Curiosity Gap, Comparison/Objection Handling, Transformation
+5. Offers must stay strictly within margin guardrails
 
-Return JSON array: [{{problem, angle, offer, angle_components}}]"""
+Return JSON array: [{{persona, awareness_stage, problem, angle, offer, angle_components}}]"""
 
     def _build_step2_prompt(
         self,
@@ -141,7 +145,7 @@ Return JSON array: [{{problem, angle, offer, angle_components}}]"""
         template: TemplateResponse,
     ) -> str:
         candidates_json = json.dumps([c.model_dump() for c in candidates], indent=2)
-        return f"""Write a summary for each of these concept candidates.
+        return f"""Write a summary for each of these concept candidates adhering to Hook Strategy and The Bridge.
 
 PRODUCT: {product.title} (₹{product.sp}, {product.category})
 TEMPLATE: {template.name} — {template.spec.layout}
@@ -149,15 +153,26 @@ TEMPLATE: {template.name} — {template.spec.layout}
 CANDIDATES:
 {candidates_json}
 
-For each candidate, return:
-- hook_line: The first 3 seconds — a scroll-stopping opening line (spoken or on-screen text)
-- how_it_looks: How this concept would look inside the "{template.name}" template
-- rationale: Strategic reasoning tied to the specific persona pain point and product
-- offer_line: Final offer as it would appear in the ad
-- claims_used: List of product claims this concept relies on
-- score: 0–100 overall strategic strength
+HOOK & BRIDGE REQUIREMENTS:
+1. 3-Layer Hook (First 0–3s):
+   - visual: Surprising/intriguing visual scene stopping the scroll
+   - audio: Spoken dialogue/voiceover transcribed by Meta Andromeda (relevant to persona)
+   - copy: Text overlay on screen within safe zones
+2. The Bridge (Eugene Schwartz / Hopkins continuity):
+   - Seamlessly transition from the agitated problem to the unique mechanism WITHOUT an abrupt 'product drop'.
+3. How it looks inside "{template.name}".
+4. Strategic rationale tied to the persona and product.
 
-Return JSON array: [{{hook_line, how_it_looks, rationale, offer_line, claims_used, score}}]"""
+Return JSON array: [{{
+  hook_line,
+  hook_layers: {{ visual, audio, copy }},
+  bridge,
+  how_it_looks,
+  rationale,
+  offer_line,
+  claims_used,
+  score
+}}]"""
 
     def _build_step3_prompt(
         self,
@@ -243,36 +258,48 @@ Write a detailed, ready-to-use generation prompt. Be specific about lighting, co
         if "distinct creative concepts" in prompt:
             return json.dumps([
                 {
+                    "persona": "Urban Indian working professional woman (24-29), wearing daily corporate attire, sensitive to skin reactions and fading.",
+                    "awareness_stage": "problem_aware",
                     "problem": "Cheap jewellery oxidises and leaves greenish marks after minimal use.",
                     "angle": "Contrarian Truth: Most affordable jewellery sacrifices base metal quality; 925 silver with rhodium coating prevents oxidation.",
                     "offer": "60% off + Complimentary anti-tarnish storage pouch",
                     "angle_components": ["Contrarian Truth", "Problem Agitation"]
                 },
                 {
+                    "persona": "Young Indian woman (23-28) in Delhi/Bangalore seeking effortless luxury styling for work-to-dinner transitions.",
+                    "awareness_stage": "solution_aware",
                     "problem": "Struggles to find daily-wear jewellery that looks elegant in professional settings.",
                     "angle": "Social Proof & Minimalist Luxury: Layered styling designed specifically for work-to-evening transitions.",
                     "offer": "Special introductory price + Extra 10% off on prepaid orders",
                     "angle_components": ["Social Proof/Domain Authority", "Transformation"]
                 },
                 {
+                    "persona": "Indian partner/friend looking for a fail-safe, premium anniversary or birthday gift without guesswork.",
+                    "awareness_stage": "problem_aware",
                     "problem": "Gifting anxiety: worried that gift looks inexpensive or deteriorates quickly.",
                     "angle": "Curiosity Gap & Emotion: The one gift guaranteed to never lose its shine or sentimental value.",
                     "offer": "Gift-ready packaging included at no additional cost",
                     "angle_components": ["Curiosity Gap", "Comparison/Objection Handling"]
                 },
                 {
+                    "persona": "Health-conscious Indian woman with sensitive skin who gave up on fashion jewellery due to rashes.",
+                    "awareness_stage": "problem_aware",
                     "problem": "Skin irritation and nickel allergic reactions caused by fashion accessories.",
                     "angle": "Domain Authority: 100% hypoallergenic certified silver certified safe for sensitive skin.",
                     "offer": "Bundle discount: Buy 2 get 15% off",
                     "angle_components": ["Problem Agitation", "Social Proof/Domain Authority"]
                 },
                 {
+                    "persona": "Busy Indian woman (26-34) who loves layered necklines but hates untangling knotted chains.",
+                    "awareness_stage": "product_aware",
                     "problem": "Difficulties accessorizing different necklines without tangled chains.",
                     "angle": "Comparison / Usability: Engineered 3-tier clasp keeps all three chains positioned without tangling.",
                     "offer": "Free shipping across India on all orders today",
                     "angle_components": ["Comparison/Objection Handling", "Transformation"]
                 },
                 {
+                    "persona": "Cautious online shopper burned by misleading Instagram jewellery ads and imitation brass.",
+                    "awareness_stage": "most_aware",
                     "problem": "Hesitation over online jewellery authenticity and return hassles.",
                     "angle": "Objection Handling: Authentic 925 hallmark stamp visible on every piece with 7-day hassle-free exchange.",
                     "offer": "Limited-time flash sale price guaranteed",
@@ -283,48 +310,84 @@ Write a detailed, ready-to-use generation prompt. Be specific about lighting, co
             return json.dumps([
                 {
                     "hook_line": "Your silver necklace is turning black because of this one hidden shortcut.",
+                    "hook_layers": {
+                        "visual": "Extreme close-up of a tarnished, greenish necklace being swapped for a gleaming 925 silver piece",
+                        "audio": "Your silver jewellery isn't turning black because of your skin — it's because of this one hidden manufacturing shortcut.",
+                        "copy": "Why cheap silver turns green ❌"
+                    },
+                    "bridge": "Most brands coat cheap brass with micro-thin silver and call it a day. But here is what happens when you use pure rhodium-sealed 925 sterling silver.",
                     "how_it_looks": "Centered hero product shot with macro focus on 925 hallmark stamp and gleaming rhodium finish.",
-                    "rationale": "Directly confronts the primary hesitation for silver buyers in this price segment.",
+                    "rationale": "Directly confronts the primary hesitation for silver buyers in this price segment using Eugene Schwartz consequence naming.",
                     "offer_line": "Get 60% Off + Free Anti-Tarnish Pouch Today",
                     "claims_used": ["925 sterling silver", "Anti-tarnish coating", "Rhodium finish"],
                     "score": 94
                 },
                 {
                     "hook_line": "The exact 3-piece layering trick that makes any outfit look 10x more expensive.",
+                    "hook_layers": {
+                        "visual": "Side-by-side transition showing plain collared shirt instantly elevated with layered 925 necklace",
+                        "audio": "Here's the exact 3-piece jewellery rule celebrity stylists use to make a simple ₹500 shirt look like luxury designer wear.",
+                        "copy": "The 3-Piece Layering Secret ✨"
+                    },
+                    "bridge": "You don't need a heavy jewellery box — just the right calibrated tier lengths that frame your neckline naturally.",
                     "how_it_looks": "Clean aesthetic split layout showcasing layered necklace on crisp collar.",
-                    "rationale": "High aspirational value focused on effortless elegance.",
+                    "rationale": "High aspirational value focused on effortless elegance and immediate status transformation.",
                     "offer_line": "Introductory Pricing: Flat ₹599 + Extra 10% Off Prepaid",
                     "claims_used": ["925 sterling silver", "Layered 3-chain set"],
                     "score": 90
                 },
                 {
                     "hook_line": "Stop giving gifts that end up in the back of the drawer after a month.",
+                    "hook_layers": {
+                        "visual": "Aesthetic slow-motion unboxing of an embossed gift box with silk ribbon pull",
+                        "audio": "If you're buying a gift this month, stop picking things that end up forgotten in the back of a drawer after 3 weeks.",
+                        "copy": "The Gift She'll Actually Wear 🎁"
+                    },
+                    "bridge": "The best gifts aren't the most expensive — they're the pieces she can wear every single morning without worrying about tarnish.",
                     "how_it_looks": "Warm gift unboxing vignette with silk ribbon and velvet luxury pouch.",
-                    "rationale": "Solves gifting anxiety with guaranteed product longevity.",
+                    "rationale": "Solves gifting anxiety with guaranteed product longevity and emotional sentiment.",
                     "offer_line": "Complimentary Premium Gift Box & Message Card Included",
                     "claims_used": ["925 sterling silver", "Gift packaging"],
                     "score": 88
                 },
                 {
                     "hook_line": "If your skin gets red or itchy from jewellery, watch this before buying anything.",
+                    "hook_layers": {
+                        "visual": "Close-up of gentle skin contact with necklace, highlighting smooth mirror polish and irritation-free comfort",
+                        "audio": "If your skin gets red, itchy, or irritated every time you wear fashion jewellery, you need to know this one fact.",
+                        "copy": "Sensitive skin? Watch this ⚠️"
+                    },
+                    "bridge": "It's almost never an allergy to jewellery itself — it's nickel leeching from cheap base alloys.",
                     "how_it_looks": "Close-up skin contact shot highlighting smooth hypoallergenic polish.",
-                    "rationale": "Targets high-converting health/comfort sensitive segment.",
+                    "rationale": "Targets high-converting health/comfort sensitive demographic with domain authority.",
                     "offer_line": "Hypoallergenic Guarantee: 2 Sets for ₹999 with Free Shipping",
                     "claims_used": ["Hypoallergenic", "Nickel-free", "Skin safe"],
                     "score": 92
                 },
                 {
                     "hook_line": "Why layered necklaces always tangle (and the tiny clasp design that fixes it).",
+                    "hook_layers": {
+                        "visual": "Frustrating tangled clump of chains untangled in one smooth pull using the engineered clasp",
+                        "audio": "Ever spent 20 minutes untangling layered necklaces before leaving the house? Here's why that happens and how we solved it.",
+                        "copy": "Zero Tangle Guarantee 🔒"
+                    },
+                    "bridge": "Regular chains twist because they share one anchor point. By engineering individual rotating clasps, each layer moves freely.",
                     "how_it_looks": "Side-by-side comparison demonstrating anti-tangle spacing.",
-                    "rationale": "Functional problem-solving removes purchase barrier.",
+                    "rationale": "Functional problem-solving removes purchase friction and proves mechanical superiority.",
                     "offer_line": "Shop the Anti-Tangle Set Now at 60% Off",
                     "claims_used": ["Anti-tangle 3-tier clasp", "Adjustable length"],
                     "score": 87
                 },
                 {
                     "hook_line": "The 10-second hallmark test that reveals real silver from coated brass.",
+                    "hook_layers": {
+                        "visual": "Macro lens zooming into the crisp laser-engraved 925 hallmark stamp on the necklace clasp",
+                        "audio": "Before you spend money on jewellery online, check for this tiny hallmark stamp — here's how to spot the real thing in 5 seconds.",
+                        "copy": "Check this stamp before buying 🔍"
+                    },
+                    "bridge": "Fake silver wears off in 2 weeks. Authentic 925 silver is stamped, certified, and guaranteed for life.",
                     "how_it_looks": "Magnified jeweler loop view showing pristine 925 laser engraving.",
-                    "rationale": "Builds impenetrable domain authority and authenticity trust.",
+                    "rationale": "Builds impenetrable domain authority and authenticity trust for skeptical shoppers.",
                     "offer_line": "Verified 925 Hallmark Certified — Just ₹599 Today",
                     "claims_used": ["925 hallmark certified", "Authenticity certificate"],
                     "score": 95

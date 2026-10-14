@@ -11,6 +11,7 @@ from models.schemas import (
     OptionSummary,
     ProductResponse,
     TemplateResponse,
+    StoryboardResponse,
 )
 from services.prompt_composer import PromptComposerService
 from services.storage import store
@@ -62,12 +63,16 @@ async def generate_prompt(concept_id: str):
     template = TemplateResponse(**template_data) if template_data else None
 
     candidate = OptionCandidate(
+        persona=option.get("persona", "Target Indian Consumer"),
+        awareness_stage=option.get("awareness_stage", "problem_aware"),
         problem=option["problem"],
         angle=option["angle"],
         offer=option["offer"],
     )
     summary = OptionSummary(
         hook_line=option["hook_line"],
+        hook_layers=option.get("hook_layers"),
+        bridge=option.get("bridge"),
         how_it_looks=option["summary"],
         rationale=option["rationale"],
         offer_line=option["offer"],
@@ -94,6 +99,101 @@ async def generate_prompt(concept_id: str):
         "version": "1.0",
         "component_versions": versions,
     }
+
+
+@router.post("/{concept_id}/storyboard", response_model=StoryboardResponse)
+async def generate_storyboard(concept_id: str):
+    """
+    Generate an AI video storyboard for the approved concept.
+    1. Derives an authentic Indian AI character tailored to product persona.
+    2. Writes a 9-beat direct-response sales script (Eugene Schwartz + Claude Hopkins).
+    3. Assembles a 5-scene visual storyboard maintaining character & product image consistency.
+    """
+    from services.character_service import character_service
+    from services.storyboard_service import storyboard_service
+
+    concept = store.get_concept(concept_id)
+    if not concept:
+        raise HTTPException(status_code=404, detail="Concept not found")
+
+    option = store.get_option(concept["option_id"])
+    if not option:
+        raise HTTPException(status_code=404, detail="Option not found for concept")
+
+    session = store.get_session(concept["session_id"])
+    product_data = session.get("product") if session else None
+    if not product_data:
+        product_data = {
+            "seller_id": "SD-4821",
+            "product_id": "GCNK-221",
+            "title": "GlowCraft 925 Silver Layered Necklace Set",
+            "description": "Premium 925 sterling silver layered necklace set with rhodium anti-tarnish coating.",
+            "category": "Jewellery",
+            "sp": 599.0,
+            "mrp": 1499.0,
+            "discount_percent": 60.0,
+            "images": [{"url": "https://images.unsplash.com/photo-1602173574767-37ac01994b2a?w=800", "is_reference": True}],
+            "is_in_stock": True,
+            "is_published": True,
+            "field_sources": {},
+            "fetched_at": datetime.utcnow(),
+        }
+
+    product = ProductResponse(**product_data)
+    persona = option.get("persona", "Target Indian Consumer")
+
+    # Step 1: Generate or retrieve consistent Indian AI Character
+    character = character_service.generate_character_profile(product=product, persona=persona)
+
+    candidate = OptionCandidate(
+        persona=persona,
+        awareness_stage=option.get("awareness_stage", "problem_aware"),
+        problem=option["problem"],
+        angle=option["angle"],
+        offer=option["offer"],
+    )
+    summary = OptionSummary(
+        hook_line=option["hook_line"],
+        hook_layers=option.get("hook_layers"),
+        bridge=option.get("bridge"),
+        how_it_looks=option["summary"],
+        rationale=option["rationale"],
+        offer_line=option["offer"],
+        claims_used=option.get("claims_used", []),
+    )
+
+    # Step 2: Generate 9-beat script
+    script = storyboard_service.generate_nine_beat_script(
+        candidate=candidate,
+        summary=summary,
+        product=product,
+        character=character,
+    )
+
+    # Step 3: Build multi-scene storyboard with character & product anchors
+    storyboard = storyboard_service.build_storyboard(
+        concept_id=concept_id,
+        candidate=candidate,
+        summary=summary,
+        product=product,
+        character=character,
+        script=script,
+    )
+
+    store.update_concept(concept_id, {"storyboard": storyboard.model_dump()})
+    return storyboard
+
+
+@router.get("/{concept_id}/storyboard", response_model=StoryboardResponse)
+async def get_storyboard(concept_id: str):
+    """Fetch existing storyboard for a concept."""
+    concept = store.get_concept(concept_id)
+    if not concept:
+        raise HTTPException(status_code=404, detail="Concept not found")
+    storyboard_data = concept.get("storyboard")
+    if not storyboard_data:
+        raise HTTPException(status_code=404, detail="Storyboard not yet generated for this concept")
+    return StoryboardResponse(**storyboard_data)
 
 
 @router.patch("/{concept_id}/prompt")

@@ -89,6 +89,16 @@ BANNED ELEMENTS:
             f"category_{product.category}": category_v,
         }
 
+        hook_section = f'Hook (first 3 seconds): "{summary.hook_line}"'
+        if summary.hook_layers:
+            hook_section += (
+                f"\n  - Visual Layer: {summary.hook_layers.visual}"
+                f"\n  - Spoken Audio (transcribed by Andromeda): {summary.hook_layers.audio}"
+                f"\n  - On-Screen Text Overlay: {summary.hook_layers.copy}"
+            )
+
+        bridge_section = f"\nBridge to Solution: {summary.bridge}" if summary.bridge else ""
+
         prompt = f"""{compiler}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -108,10 +118,12 @@ CATEGORY PACK: {product.category}
 {category_pack}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-CONCEPT BRIEF
+CONCEPT BRIEF (ANDROMEDA VECTOR TARGETING)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Hook (first 3 seconds): "{summary.hook_line}"
-Problem: {candidate.problem}
+Target Persona: {candidate.persona}
+Awareness Stage: {candidate.awareness_stage}
+{hook_section}
+Problem: {candidate.problem}{bridge_section}
 Angle: {candidate.angle}
 Offer: {candidate.offer}
 Claims in use: {', '.join(summary.claims_used) or 'None'}

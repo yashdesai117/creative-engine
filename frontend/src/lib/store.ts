@@ -14,6 +14,8 @@ import {
   MOCK_OPTIONS,
   MOCK_TEMPLATES,
   MOCK_PROMPT,
+  MOCK_BANNER_PROMPT,
+  MOCK_VIDEO_PROMPT_2PARTS,
 } from "@/lib/mock-data";
 import { generateConceptCode, generateAdName, sleep } from "@/lib/utils";
 
@@ -338,6 +340,10 @@ export const useSessionStore = create<SessionFlowState>()((set, get) => ({
     set({ isGeneratingPrompts: true });
     await sleep(2500);
 
+    const { session } = get();
+    const isVideo = session?.format === "video";
+    const baseMock = isVideo ? MOCK_VIDEO_PROMPT_2PARTS : MOCK_BANNER_PROMPT;
+
     set((state) => ({
       isGeneratingPrompts: false,
       session: state.session
@@ -346,7 +352,9 @@ export const useSessionStore = create<SessionFlowState>()((set, get) => ({
             concepts: state.session.concepts.map((c, i) => ({
               ...c,
               finalPrompt:
-                i === 0 ? MOCK_PROMPT : `${MOCK_PROMPT}\n\n[CONCEPT VARIANT ${i + 1}]\nHook: ${c.option.hookLine}\nProblem: ${c.option.problem}`,
+                i === 0
+                  ? baseMock
+                  : `${baseMock}\n\n[VARIANT ${i + 1} — ANGLE: ${c.option.angle}]\nHook: ${c.option.hookLine}\nProblem: ${c.option.problem}`,
               status: "approved",
             })),
           }

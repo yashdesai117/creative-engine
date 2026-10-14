@@ -84,13 +84,69 @@ export interface Template {
 
 // ─── Options & Concepts ─────────────────────────────────────────────────────
 
+export interface HookLayers {
+  visual: string;
+  audio: string;
+  copy: string;
+}
+
+export interface AICharacterProfile {
+  id: string;
+  name: string;
+  ethnicity: string;
+  gender: string;
+  ageRange: string;
+  personaContext: string;
+  appearanceTraits: string;
+  clothingStyle: string;
+  visualAnchorPrompt: string;
+  referenceImageUrl?: string;
+}
+
+export interface NineBeatScript {
+  hook: string;
+  problemAgitation: string;
+  bridge: string;
+  promise: string;
+  mechanism: string;
+  objectionHandling: string;
+  proof: string;
+  offer: string;
+  riskReversalCta: string;
+}
+
+export interface StoryboardScene {
+  sceneNumber: number;
+  beatName: string;
+  durationSeconds: number;
+  visualPrompt: string;
+  spokenAudio: string;
+  textOverlay: string;
+  cameraMotion: string;
+  keyframeUrl?: string;
+}
+
+export interface StoryboardResponse {
+  conceptId: string;
+  character: AICharacterProfile;
+  script: NineBeatScript;
+  scenes: StoryboardScene[];
+  totalDurationSeconds: number;
+  aspectRatio: string;
+  status: string;
+}
+
 export interface OptionDraft {
   id: string;
   templateId: string;
+  persona?: string;
+  awarenessStage?: string;
   problem: string;
   angle: string;
   offer: string;
   hookLine: string;
+  hookLayers?: HookLayers;
+  bridge?: string;
   summary: string;
   rationale: string;
   claimsUsed: string[];
@@ -113,6 +169,7 @@ export interface Concept {
   adId?: string;
   feedback?: "up" | "down";
   feedbackNote?: string;
+  storyboard?: StoryboardResponse;
 }
 
 // ─── Session ────────────────────────────────────────────────────────────────

@@ -1,54 +1,62 @@
 {
   "compiler": {
-    "version": "1.0",
-    "content": "PRODUCT FIDELITY RULES (non-negotiable):\n- Use the attached reference product image EXACTLY as shown\n- Do NOT redraw, recolor, or alter the product appearance in any way\n- The product must remain photorealistic and true to the reference\n\nFINANCIAL ACCURACY:\n- Show only the price and offer that match the live product page\n- Never display cost price or internal margin data\n- Discount percentage must match actual MRP vs SP calculation\n\nTEXT AND LAYOUT:\n- Keep text within safe zones (10% margin on all edges)\n- Ensure text is legible at mobile resolution (minimum 16px equivalent)\n- Honour the aspect ratio of the template exactly\n- All text slots follow the character limits specified in the template\n\nBANNED ELEMENTS:\n- No competitor logos or branding\n- No medical or health claims unless in category approved list\n- No explicit before/after transformation imagery\n- No price manipulation or inflated crossed-out prices"
+    "version": "2.1",
+    "content": "PRODUCT FIDELITY RULES (non-negotiable):\n- Use the attached reference product image EXACTLY as shown\n- Do NOT redraw, recolor, or alter the product appearance in any way\n- The product must remain photorealistic and true to the reference\n\nMETA ANDROMEDA & GEM MULTIMODAL ALGORITHM RULES:\n- The creative IS the targeting: craft specific personas, problems, and environments so Meta's vector retrieval finds the exact buyer cluster\n- Transcript scanning: Meta auto-transcribes every video ad. The spoken dialogue/voiceover must explicitly speak to the target persona in their authentic tone\n- Multimodal coherence: Visuals, spoken audio, and text overlays must tell one cohesive story, never competing messages\n- Entity ID & Similarity protection: Avoid generic or near-duplicate layouts; ensure genuine concept diversity across Persona × Angle × Offer\n\nHINDI AUDIO & PRONUNCIATION SAFEGUARD (CRITICAL FOR VIDEO CREATIVES):\n- All spoken dialogue and voiceovers MUST be written in natural, conversational Hindi (in Devanagari script, e.g., 'अगर आपकी चांदी की ज्वेलरी भी 2 हफ़्ते में काली पड़ जाती है...')\n- This guarantees AI voice tools (ElevenLabs, Google TTS, Veo) and voice artists pronounce words, stress, and inflections accurately without butchering Indian diction\n- Provide phonetic Hinglish transliteration alongside for production reference\n\nBANNER AD STRATEGIC ARCHITECTURE (PRINCIPALLY IDENTICAL TO VIDEO):\n- Persona × Problem × Angle × Offer: Every banner is built on the same strategic quadriad and Eugene Schwartz awareness level\n- Banner 3-Layer Hook:\n  * Layer 1 (Visual Hook): Scroll-stopping hero composition, problem/solution split, or macro craftsmanship\n  * Layer 2 (Andromeda Copy): Primary ad text specifically tuned for Meta's vector categorization\n  * Layer 3 (On-Screen Text): Safe-zone headline, proof badge (e.g. 'Hallmarked 925'), and margin-safe offer badge\n- Advertorial & Long-form Statics: Highly effective for problem-aware cold audiences by moving them from pain to solution in a single frame\n- Real Product Image Anchor: Strict non-negotiable rule. Product must match actual inventory.\n\n8–10 SECOND VIDEO LIMIT & 2-PART STRUCTURE (GOOGLE VEO / FLOW CONSTRAINTS):\n- Single-clip video models (Veo, Google Flow, Kling) are capped at 8–10 seconds\n- When extended duration is required, write scripts in MAX 2 PARTS (8–10s each):\n  * Part 1 (0–9s): The 3-Layer Hook, Problem Agitation & The Bridge\n  * Part 2 (9–18s): Product Reveal (exact reference match), Unique Mechanism, Proof & Margin-Safe Offer with CTA\n- Consistency Anchors: Part 1 and Part 2 MUST lock the identical AI Character Seed, lighting temperature (e.g., 4500K), wardrobe, setting, and color grade\n\nTHE BRIDGE & TRANSITION:\n- Never do an abrupt 'product drop'. Smoothly guide the viewer from problem agitation into the reason why past solutions failed, then introduce the product naturally\n\nPROOF HIERARCHY & PERSUASION:\n- Persuasion follows the proof ladder: 1. Visual Demonstration > 2. Clinical / Lab Data > 3. Real Customer Testimonials > 4. Founder Assertion\n- Always pair product promises with an explicit Unique Mechanism (the 'reason to believe')\n\nFINANCIAL & COMPLIANCE GUARDRAILS:\n- Show only the price and offer that match the live product page\n- Never display cost price or internal margin data\n- Discount percentage must match actual MRP vs SP calculation\n- Keep text within safe zones (10% margin on all edges), legible at mobile resolution (min 16px equivalent)\n- No competitor logos, inflated crossed-out prices, or non-compliant medical claims"
   },
   "families": {
     "product_hero": {
-      "version": "1.0",
-      "content": "Product Hero logic: Center the product with clear lighting. Focus on material texture, shine, and craftsmanship. Clean studio environment with minimal distraction."
+      "version": "2.0",
+      "content": "Product Hero logic: Center the product with clear lighting. Focus on material texture, shine, and craftsmanship. Clean studio environment with minimal distraction. Best for solution-aware and product-aware audiences where single-frame visual value is high."
     },
     "problem_solution": {
-      "version": "1.0",
-      "content": "Problem-Solution logic: Establish the relatable pain point or emotional friction in the visual cue or hook line. Provide the product as the effortless, definitive solution."
+      "version": "2.0",
+      "content": "Problem-Solution logic: Establish the relatable pain point or emotional friction in the visual cue and spoken hook. Use Eugene Schwartz consequence-naming (3-12s). Bridge smoothly to the product as the effortless, definitive solution backed by a unique mechanism."
+    },
+    "ugc_creator": {
+      "version": "2.0",
+      "content": "UGC & Creator-Led logic: Relatable customer perspective with an authentic Indian character. Handheld smartphone composition, natural domestic/lifestyle lighting, conversational first-person narrative. High trust, low ad fatigue."
+    },
+    "contrarian_educational": {
+      "version": "2.0",
+      "content": "Contrarian & Educational logic: Challenge industry myths (e.g. 'Everything you were told about X is wrong'). Open a curiosity gap and provide domain expertise before introducing the product mechanism."
     },
     "offer_led": {
-      "version": "1.0",
-      "content": "Offer-Led logic: Emphasize maximum value perception. High contrast discount badge and pricing clarity, while keeping the product premium and desirable."
+      "version": "2.0",
+      "content": "Offer-Led logic: Emphasize maximum value perception for high-intent/most-aware audiences. High contrast discount badge and pricing clarity, while keeping the product premium and desirable. Tied to clear margin guardrails."
     },
     "lifestyle": {
-      "version": "1.0",
-      "content": "Lifestyle logic: Place the product in authentic, aspirational day-to-day settings. Focus on emotion, aesthetic mood, and natural styling."
+      "version": "2.0",
+      "content": "Lifestyle logic: Place the product in authentic, aspirational day-to-day Indian settings. Focus on emotion, aesthetic mood, and natural styling matching target persona age and context."
     },
-    "ugc_style": {
-      "version": "1.0",
-      "content": "UGC Style logic: Relatable customer perspective. Handheld composition, warm authentic lighting, conversational review tone."
+    "testimonial_proof": {
+      "version": "2.0",
+      "content": "Testimonial & Social Proof logic: Feature authentic customer belief changes, objection handling (e.g., 'I nearly didn't buy because...'), and specific quantified results (Claude Hopkins specificity)."
     },
     "gifting": {
-      "version": "1.0",
-      "content": "Gifting logic: Emotional resonance around special moments, thoughtful presentation, gift box unboxing aesthetics."
+      "version": "2.0",
+      "content": "Gifting logic: Emotional resonance around special moments (festivals, anniversaries, birthdays), thoughtful unboxing presentation, gift box aesthetics, addressing gifting anxiety."
     }
   },
   "category_packs": {
     "Jewellery": {
-      "version": "1.0",
-      "content": "Jewellery Pack: Emphasize 925 sterling silver stamp, rhodium shine, anti-tarnish coating, skin-safe hypoallergenic properties. Props: velvet trays, marble slabs, soft silk fabric, warm directional light."
+      "version": "2.0",
+      "content": "Jewellery Pack: Emphasize 925 sterling silver stamp, rhodium shine, anti-tarnish coating, skin-safe hypoallergenic properties. Indian urban styling, festive and workwear versatility. Props: velvet trays, marble slabs, soft silk fabric, warm directional light."
     },
     "Fashion": {
-      "version": "1.0",
-      "content": "Fashion Pack: Emphasize fabric texture, drape, fit versatility, breathable weave. Props: architectural arches, neutral backdrops, daylight studio."
+      "version": "2.0",
+      "content": "Fashion Pack: Emphasize fabric texture, drape, fit versatility, breathable weave, comfort in Indian climate. Contemporary Indian ethnic and western fusion. Props: architectural arches, neutral backdrops, daylight studio."
     },
     "Beauty & Personal Care": {
-      "version": "1.0",
-      "content": "Beauty Pack: Clean dermatological look, hydration droplets, ingredient botanical cues, fresh morning light."
+      "version": "2.0",
+      "content": "Beauty Pack: Clean dermatological look, hydration droplets, ingredient botanical cues, fresh morning light. Address specific Indian skin concerns (pigmentation, tanning, humidity, sensitive scalp)."
     },
     "Home & Kitchen": {
-      "version": "1.0",
-      "content": "Home Pack: Cozy modern living space, functional kitchen counter, ambient warmth, durable utility."
+      "version": "2.0",
+      "content": "Home Pack: Modern Indian apartment/home setting, functional kitchen counter, ambient warmth, durable utility, space efficiency."
     },
     "default": {
-      "version": "1.0",
-      "content": "Default Pack: Clean modern product showcase, studio gradient background, high-contrast typography, premium lighting."
+      "version": "2.0",
+      "content": "Default Pack: Clean modern product showcase, studio gradient background, high-contrast typography, premium lighting, Indian cultural context."
     }
   }
 }
