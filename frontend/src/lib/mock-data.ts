@@ -440,52 +440,60 @@ export const MOCK_VIDEO_PROMPT_2PARTS = `=======================================
 SPECIMEN 2-PART VIDEO PROMPT FOR GOOGLE VEO / GOOGLE FLOW / KLING (MAX 2 PARTS, 8–10s EACH)
 ================================================================================
 
-AI CHARACTER CONSISTENCY SEED:
+AI CHARACTER CONSISTENCY SEED (LOCKED ACROSS BOTH PARTS):
 - Character: "Ananya", authentic 26-year-old urban Indian woman.
-- Physical traits: Warm wheatish Indian complexion, expressive brown eyes, shoulder-length wavy dark hair, natural radiant makeup.
-- Wardrobe: Elegant solid pastel lavender collar shirt, subtle dainty silver stud earrings.
-- Seed Lock Token: [ANANYA_IND_26_VEO_ANCHOR]
-- Technical Consistency: 4500K soft warm daylight, 35mm f/1.8 lens bokeh, 9:16 vertical (1080×1920), 24fps cinematic realism.
+- Physical traits: Warm wheatish Indian complexion, expressive brown eyes, shoulder-length wavy dark brown hair, small round maroon bindi between brows, minimal radiant dewy makeup.
+- Wardrobe: Solid pastel lilac-lavender linen button-down shirt with open collar and rolled cuffs, dainty silver stud earrings (STRICTLY IDENTICAL IN BOTH PARTS).
+- Location: Sunlit modern Bangalore bedroom vanity table with wooden mirror frame and soft morning daylight (4500K) from camera left (STRICTLY IDENTICAL IN BOTH PARTS).
+- Seed Lock Token: [ANANYA_IND_26_LILAC_SHIRT_BINDI_VANITY]
+- Technical Profile: 4500K warm daylight, 35mm f/1.8 lens bokeh, 9:16 vertical (1080×1920), 24fps cinematic realism.
 
-PRODUCT ANCHOR:
+PRODUCT ANCHOR (ZERO PRODUCT SWAPS — VISIBLE FROM SECOND 0):
 - Product: GlowCraft 925 Silver Layered Necklace Set (SKU: GCNK-221).
-- Non-negotiable: EXACT MATCH to attached reference image. Do not alter 3-tier chain geometry or star/moon pendants.
+- Non-negotiable Geometry: EXACTLY 3 delicate sterling silver chains (lengths 16", 18", 20"). Middle tier has 1 tiny polished silver crescent moon pendant (6mm). Bottom tier has 1 tiny polished silver star pendant (5mm).
+- Strict Rule: DO NOT switch to a different necklace. DO NOT add extra chains or coin charms. Worn by Ananya across both parts.
 
 ────────────────────────────────────────────────────────────────────────────────
-PART 1 (0–9 SECONDS) — THE 3-LAYER HOOK, FRICTION & THE BRIDGE
+PART 1 (0–9 SECONDS) — HOOK & PROBLEM: PRODUCT VISIBLE ON COLLARBONE FROM 0s
 ────────────────────────────────────────────────────────────────────────────────
-• Visual Prompt (Veo / Google Flow):
-  "Cinematic handheld medium shot of Ananya ([ANANYA_IND_26_VEO_ANCHOR]) in a contemporary Indian apartment with soft morning daylight streaming through a sheer curtain. She looks into a mirror holding a dull, discolored metal necklace with a relatable, frustrated expression. She turns directly to camera at 2.5s with a slight push-in zoom, speaking urgently. Warm natural lighting, authentic skin texture with zero plastic sheen, realistic Indian interior background."
+• Visual Prompt (Veo / Google Flow / Kling):
+  "CONTINUOUS SINGLE SCENE: Ananya ([ANANYA_IND_26_LILAC_SHIRT_BINDI_VANITY]) is seated at her wooden vanity mirror in a sunlit Bangalore bedroom. She is ALREADY WEARING the GlowCraft 925 Silver Layered Necklace (strictly 3 fine silver chains with tiny moon & star charms, no coin charms) against her collarbone. At 0-2s she looks into the mirror gently touching the dainty silver moon pendant with an inquiring, thoughtful expression. At 2.5s she turns smoothly to camera with a warm, relatable smile and begins speaking directly to the viewer. Conversational gentle handheld camera, natural lip sync. Speech finishes comfortably at 6.0s, leaving 3.0s buffer of her confident smile and necklace gleam. No rushed movement, no product morphing. 24fps cinematic realism."
 
-• Spoken Dialogue / Voiceover (Written in authentic Hindi Devanagari to ensure 100% accurate pronunciation):
-  "अगर आपकी चांदी की ज्वेलरी भी 2 हफ़्ते में काली पड़ जाती है और स्किन हरी हो जाती है — तो ये 3 सेकंड की बात ज़रूर सुनिए। बाज़ार की सस्ती ज्वेलरी ब्रास पर सिर्फ पतली पॉलिश होती है जो पसीने से उतर जाती है!"
+• Spoken Dialogue / Voiceover (Strict 13 Words · 5.0 Seconds Natural Speech Pacing):
+  "चांदी की लेयर्ड ज्वेलरी काली पड़ने से डरती हैं? मेरा ये नेकलेस देखिए!"
 
 • Phonetic Transliteration (for voice artist / TTS reference):
-  "Agar aapki silver jewellery bhi 2 hafte mein kaali pad jaati hai aur skin hari ho jaati hai — toh yeh 3 second ki baat zaroor suniye. Bazaar ki sasti jewellery brass par sirf patli polish hoti hai jo paseene se utar jaati hai!"
+  "Chandi ki layered jewellery kaali padne se darti hain? Mera yeh necklace dekhiye!"
+
+• English Meaning:
+  "Afraid layered silver jewellery will turn black? Look at my necklace!"
 
 • On-Screen Text Overlay (Safe Zone):
-  "चांदी 2 हफ़्ते में काली क्यों पड़ती है? ❌" (Bold high-contrast subtitle)
+  "लेयर्ड चांदी काली पड़ने का डर? ❌" (Bold high-contrast subtitle)
 
-• Camera Motion: Handheld conversational eye-level, gentle punch-in at 2.5s.
-• Duration: 9.0 seconds.
+• Camera Motion: Conversational eye-level, gentle punch-in at 2.5s to collarbone.
+• Duration: 9.0 seconds (Speech: 5.0s | Buffer: 4.0s).
 
 ────────────────────────────────────────────────────────────────────────────────
-PART 2 (9–18 SECONDS) — UNIQUE MECHANISM, PROOF & MARGIN-SAFE OFFER CTA
+PART 2 (9–18 SECONDS) — EXACT SAME ROOM & OUTFIT: 925 HALLMARK PROOF & OFFER CTA
 ────────────────────────────────────────────────────────────────────────────────
-• Visual Prompt (Veo / Google Flow):
-  "MATCHING SCENE CONTINUITY: Exact same lighting (4500K) and color grade as Part 1. Opens with an extreme macro slow-orbit glide over the GlowCraft 925 Silver Layered Necklace Set (locked to reference product image). Pristine mirror-finish rhodium shine with a microscopic water droplet rolling cleanly off the chain, showcasing the anti-tarnish coating. Laser-engraved '925' hallmark stamp sharply in focus. Smoothly cuts at 13s to Ananya ([ANANYA_IND_26_VEO_ANCHOR]) wearing the layered necklace against her collarbone, smiling radiantly and gesturing approvingly to tap below. Clean gradient lower-third overlay with animated offer badge."
+• Visual Prompt (Veo / Google Flow / Kling):
+  "MATCHING SCENE CONTINUITY: Exact same sunlit Bangalore bedroom, exact same lighting (4500K), exact same Ananya ([ANANYA_IND_26_LILAC_SHIRT_BINDI_VANITY]) wearing the exact same lilac linen shirt with maroon bindi. Starts with a close-up on her collarbone (0-3s) as she gently tilts the necklace clasp/pendant towards camera showing the razor-sharp laser-engraved '925' hallmark stamp with high-mirror rhodium shine. At 3.5s camera tilts smoothly up to Ananya's face as she speaks Part 2 dialogue with radiant confidence. Speech finishes cleanly at 6.2s. At 7.0s she gestures warmly down towards the offer sticker. Lower-third animated badge: 'FLAT 60% OFF · ₹599 · 7-DAY GUARANTEE'. 24fps cinematic realism."
 
-• Spoken Dialogue / Voiceover (Written in authentic Hindi Devanagari to ensure 100% accurate pronunciation):
-  "लेकिन ये है ग्लोक्राफ्ट का 925 स्टर्लिंग सिल्वर, जिसपर है 100% रोडियम एंटी-टार्निश शील्ड। चाहे रोज़ पहनो, चमक हमेशा नई जैसी रहेगी! आज स्पेशल ऑफर में सिर्फ ₹599 में — 7 दिन की आसान एक्सचेंज गारंटी के साथ। अभी नीचे दिए गए लिंक पर टैप करें!"
+• Spoken Dialogue / Voiceover (Strict 14 Words · 5.2 Seconds Natural Speech Pacing):
+  "ग्लोक्राफ्ट का 925 स्टर्लिंग सिल्वर, रोडियम शील्ड के साथ! आज सिर्फ ₹599 में नीचे आर्डर करें।"
 
 • Phonetic Transliteration (for voice artist / TTS reference):
-  "Lekin yeh hai GlowCraft ka 925 sterling silver, jispar hai 100% rhodium anti-tarnish shield. Chahe roz pehno, chamak hamesha nayi jaisi rahegi! Aaj special offer mein sirf Rs. 599 mein — 7 din ki easy exchange guarantee ke saath. Abhi neeche diye gaye link par tap karein!"
+  "GlowCraft ka 925 sterling silver, rhodium shield ke saath! Aaj sirf Rs. 599 mein neeche order karein."
+
+• English Meaning:
+  "GlowCraft's 925 sterling silver with rhodium shield! Today at just ₹599, order below."
 
 • On-Screen Text Overlay (Safe Zone):
   "100% Rhodium 925 Silver ✨ • Flat 60% OFF • सिर्फ ₹599 👇"
 
-• Camera Motion: Macro slow orbit across hallmark, transitioning to medium hero smile with subtle slow push.
-• Duration: 9.0 seconds.
+• Camera Motion: Macro punch on 925 hallmark, smooth tilt up to hero smile and tap gesture.
+• Duration: 9.0 seconds (Speech: 5.2s | Buffer: 3.8s).
 ================================================================================`;
 
 export const MOCK_STORYBOARD_IMAGE_PROMPT = `================================================================================
@@ -494,40 +502,40 @@ Generate these High-Res Stills FIRST (Midjourney v6.1 / Flux.1 / Nano Banana)
 Then feed each image as "First Frame / Image-to-Video" into Google Veo / Google Flow
 ================================================================================
 
-WHY GENERATE STILLS FIRST?
-1. Character Face Consistency: Direct text-to-video causes severe facial distortion & morphing. Generating the keyframe image first locks Ananya's facial structure, skin texture, and styling.
-2. Product Fidelity: Prevents the AI from hallucinating incorrect jewellery geometry. The 3-tier chain and star/moon pendants are locked to the real product reference.
-3. Lighting & Palette Match: Both Part 1 and Part 2 share the exact same 4500K soft daylight and 35mm f/1.8 optical profile.
+CRITICAL ARCHITECTURE RULES TO ELIMINATE AI HALLUCINATIONS:
+1. Single Product Rule: Ananya wears the EXACT GlowCraft 925 Silver Layered Necklace from Frame 0. ZERO product swaps!
+2. Strict Geometry Anchor: Exactly 3 delicate cable chains (16", 18", 20") + 1 tiny crescent moon + 1 tiny star. NO extra chains, NO coin charms.
+3. Single Scene & Outfit Continuity: Both Keyframe 1 and Keyframe 2 are shot in the EXACT same Bangalore bedroom vanity corner with the exact same lilac shirt and maroon bindi.
 
 ────────────────────────────────────────────────────────────────────────────────
 KEYFRAME 1 (PART 1 FIRST FRAME STILL — 0.0s START FRAME)
 Engine: Midjourney v6.1 / Flux.1 Schnell / Nano Banana | Aspect Ratio: 9:16 Vertical
 ────────────────────────────────────────────────────────────────────────────────
 PROMPT:
-"Photorealistic 8k vertical editorial portrait (9:16) of Ananya, an authentic 26-year-old urban Indian woman with warm wheatish complexion, expressive almond brown eyes, shoulder-length wavy dark brown hair, and natural radiant minimal makeup. She is standing in front of a modern vanity mirror in a sunlit Bangalore apartment with sheer white curtains diffusing soft warm morning daylight (4500K). She is wearing an elegant solid pastel lavender collar shirt. She holds a visibly dull, discolored, tarnished brassy-greenish metal necklace close to her collarbone with a subtle, relatable frustrated frown, looking into the mirror. Authentic Indian skin texture with visible natural pores and fine micro-details, zero plastic wax sheen, subsurface scattering. Shot on 35mm f/1.8 lens, shallow depth of field, delicate creamy background bokeh, cinematic hyper-realistic catalog photography --ar 9:16 --style raw --v 6.1"
+"Photorealistic 8k vertical editorial portrait (9:16) of Ananya, an authentic 26-year-old urban Indian woman with warm wheatish complexion, expressive almond brown eyes, shoulder-length wavy dark brown hair, and a small round maroon bindi between her brows. Natural radiant dewy minimal makeup. She is seated in front of a wooden vanity mirror in a sunlit Bangalore bedroom with sheer cream curtains diffusing soft warm morning daylight (4500K). She is wearing a solid pastel lilac-lavender linen button-down shirt with open collar and rolled cuffs. SHE IS WEARING the GlowCraft 925 Silver Layered Necklace against her collarbone: EXACTLY 3 delicate sterling silver chains (lengths 16 inch, 18 inch, 20 inch) with 1 tiny polished silver crescent moon pendant and 1 tiny polished silver star pendant (STRICT MATCH TO REFERENCE IMAGE GCNK-221, NO coin pendants, NO extra chains). She touches the moon pendant gently, looking into the mirror with an inquiring expression. Authentic Indian skin texture with visible natural pores, zero plastic wax sheen, 35mm f/1.8 lens, shallow depth of field --ar 9:16 --style raw --v 6.1"
 
 NEGATIVE PROMPT:
-"plastic skin, porcelain, 3d render, anime, caucasian, western features, oversaturated, deformed hands, extra fingers, cartoon, blurry, watermark, text, dark underexposed"
+"plastic skin, porcelain, 3d render, anime, caucasian, extra necklace, extra chains, coin pendants, heavy gold, distorted fingers, blurry, watermark, text, dark underexposed"
 
 HOW TO USE IN VEO / FLOW:
 1. Generate and upscale this image.
 2. Upload this still as the "Starting Frame / Input Image" in Google Veo or Google Flow.
-3. Attach Part 1 Video Motion Prompt: "Camera starts on mirror reflection, slow handheld push-in at 2.5s as Ananya turns directly to camera speaking urgently with natural facial animation."
+3. Attach Part 1 Video Motion Prompt: "Animate from Keyframe 1. Ananya touches the necklace in the mirror (0-2s), then turns smoothly to camera at 2.5s speaking directly with natural facial expressions. Speech finishes at 6s with 3s buffer. No product morphing."
 
 ────────────────────────────────────────────────────────────────────────────────
-KEYFRAME 2 (PART 2 FIRST FRAME STILL — 9.0s START FRAME / MACRO REVEAL)
+KEYFRAME 2 (PART 2 FIRST FRAME STILL — 9.0s START FRAME / HALLMARK REVEAL)
 Engine: Midjourney v6.1 / Flux.1 Schnell / Nano Banana | Aspect Ratio: 9:16 Vertical
 ────────────────────────────────────────────────────────────────────────────────
 PROMPT:
-"Extreme macro commercial product photograph (9:16) of the GlowCraft 925 Silver Layered Necklace Set, STRICT MATCH TO ATTACHED REFERENCE PRODUCT IMAGE. Triple-layer sterling silver chains (16 inch, 18 inch, 20 inch) resting gracefully on folded champagne-cream silk draped over a polished white Italian marble pedestal. Razor-sharp macro focus on the laser-engraved '925' hallmark stamp on the delicate lobster clasp and dainty polished star and moon pendants. Mirror-finish rhodium anti-tarnish coating catching a clean rim light highlight. One tiny, crystal-clear microscopic water droplet beading cleanly on the silver chain link, demonstrating hydrophobic anti-tarnish protection. Studio jewelry softbox lighting, 100mm macro f/2.8 lens, hyper-detailed metallic reflections, zero chromatic aberration, pristine luxury D2C jewelry ad aesthetic --ar 9:16 --style raw --v 6.1"
+"Photorealistic 8k vertical portrait close-up (9:16), EXACT SAME SCENE CONTINUITY AS KEYFRAME 1. Same sunlit Bangalore bedroom vanity, same 4500K soft daylight, same woman Ananya in the same pastel lilac linen shirt with maroon bindi. Close-up framing on her collarbone and neatly manicured hand: she gently tilts the GlowCraft 925 Silver Layered Necklace clasp and pendant towards camera, revealing the razor-sharp laser-engraved '925' hallmark stamp with high-mirror rhodium anti-tarnish gleam. The 3 delicate silver chains (lengths 16 inch, 18 inch, 20 inch) lie neatly across her skin without tangling or extra layers. Soft out-of-focus bedroom background, 85mm f/2.0 portrait macro, ultra-crisp metallic reflections, authentic skin texture with natural pores, zero AI plastic sheen --ar 9:16 --style raw --v 6.1"
 
 NEGATIVE PROMPT:
-"yellow gold, brass, fake glitter, low resolution, inaccurate chain geometry, distorted pendants, blurry hallmark, noisy background, cheap props, oversaturated"
+"different woman, different shirt, extra chains, coin pendant, gold jewellery, brass, fake glitter, low resolution, distorted fingers, noisy background, oversaturated"
 
 HOW TO USE IN VEO / FLOW:
 1. Generate and upscale this image.
 2. Upload this still as the "Starting Frame / Input Image" for Part 2 in Google Veo or Google Flow.
-3. Attach Part 2 Video Motion Prompt: "Ultra-smooth macro orbital glide across hallmark and rhodium gleam (0-4s), cutting smoothly at 4.5s to Ananya wearing the layered necklace smiling radiantly at camera."
+3. Attach Part 2 Video Motion Prompt: "Animate from Keyframe 2. Camera glides across sharp 925 hallmark (0-3s), tilts smoothly up to Ananya's face (3-5s) as she speaks Part 2 dialogue in the same lilac shirt. Speech completes cleanly at 6.2s. At 7s she gestures warmly down towards offer badge."
 ================================================================================`;
 
 export const MOCK_PROMPT = MOCK_BANNER_PROMPT;

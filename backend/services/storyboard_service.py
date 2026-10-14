@@ -117,92 +117,92 @@ class StoryboardService:
 
         scenes = [
             # ─────────────────────────────────────────────────────────────────
-            # PART 1 (0–9 Seconds): THE HOOK, FRICTION & THE BRIDGE
+            # PART 1 (0–9 Seconds): HOOK & PROBLEM — PRODUCT VISIBLE FROM SECOND 0
             # ─────────────────────────────────────────────────────────────────
             StoryboardScene(
                 scene_number=1,
                 part_number=1,
-                beat_name="Part 1 (0–9s): The 3-Layer Hook & Friction Bridge",
+                beat_name="Part 1 (0–9s): The 3-Layer Hook & Product Introduction",
                 duration_seconds=9.0,
                 keyframe_image_prompt=(
                     f"Photorealistic 8k vertical keyframe (9:16) for Midjourney / Nano Banana / Flux: "
-                    f"Medium portrait of {character.name} ({char_anchor}). "
-                    f"She stands in front of a mirror in a modern sunlit Indian apartment, holding a dull, tarnished green-stained necklace "
-                    f"near her collarbone with a relatable, frustrated expression. Soft 4500K morning daylight, authentic skin texture with natural pores, "
-                    f"35mm f/1.8 lens bokeh, true-to-life non-plastic lighting."
+                    f"Medium portrait of {character.name} ({char_anchor}), an authentic 26yo Indian woman with warm wheatish skin, "
+                    f"wavy dark hair, small round maroon bindi, wearing a solid pastel lilac-lavender linen button-down shirt. "
+                    f"She is seated at a wooden dressing table mirror in a sunlit Bangalore bedroom (soft 4500K morning daylight). "
+                    f"SHE IS ALREADY WEARING the {product.title} on her collarbone: EXACTLY 3 delicate sterling silver chains (16\", 18\", 20\") "
+                    f"with 1 tiny crescent moon pendant and 1 tiny star pendant (STRICT MATCH to reference image GCNK-221, NO extra chains, NO coin charms). "
+                    f"She looks into the mirror touching the dainty moon pendant with an inquiring, thoughtful expression. 35mm f/1.8 lens, natural pores, zero plastic wax sheen."
                 ),
                 video_motion_prompt=(
                     f"Google Veo / Flow Image-to-Video prompt: "
-                    f"Animate from Keyframe 1. {character.name} looks at the tarnished necklace with relatable irritation, "
-                    f"then looks directly into camera at 2s speaking urgently. Conversational subtle handheld camera push-in at 2.5s, "
-                    f"natural facial expressions, realistic micro-movements, 24fps cinematic realism."
+                    f"Animate from Keyframe 1. {character.name} touches the layered necklace on her collarbone in the mirror (0-2s), "
+                    f"then turns warmly to camera at 2.5s smiling engagingly as she speaks Part 1 dialogue. "
+                    f"Conversational gentle handheld camera, natural lip sync, speech finishes comfortably at 6.0s leaving 3.0s visual buffer. "
+                    f"NO product changing, NO extra chain layers. 24fps cinematic realism."
                 ),
                 visual_prompt=(
-                    f"Google Veo / Flow prompt (Part 1, 9:16 vertical): "
-                    f"Cinematic handheld medium shot of {character.name} ({char_anchor}). "
-                    f"She holds a dull, tarnished necklace near her collarbone with a relatable, frustrated expression, "
-                    f"then gestures in realization as soft warm indoor daylight illuminates the scene. "
-                    f"Natural Indian apartment interior background, subtle 35mm bokeh, smooth conversational camera motion."
+                    f"Single continuous environment: Sunlit Bangalore bedroom vanity. "
+                    f"{character.name} in solid lilac linen shirt with maroon bindi, wearing {product.title} (3 fine chains, moon and star charms). "
+                    f"Turns to camera and gestures to the necklace on her neck. Warm natural lighting, 9:16 vertical."
                 ),
                 spoken_audio_hindi=(
-                    "अगर आपकी चांदी की ज्वेलरी भी कुछ ही हफ़्तों में काली पड़ जाती है और स्किन हरी हो जाती है — "
-                    "तो ये 3 सेकंड ध्यान से सुनिए। बाज़ार की सस्ती ज्वेलरी ब्रास पर सिर्फ पतली पॉलिश होती है जो पसीने से उतर जाती है!"
+                    "चांदी की लेयर्ड ज्वेलरी काली पड़ने से डरती हैं? मेरा ये नेकलेस देखिए!"
                 ),
                 spoken_audio_hinglish=(
-                    "Agar aapki silver jewellery bhi kuch hi hafton mein kaali pad jaati hai aur skin hari ho jaati hai — "
-                    "toh yeh 3 second dhyan se suniye. Bazaar ki sasti jewellery brass par sirf patli polish hoti hai jo paseene se utar jaati hai!"
+                    "Chandi ki layered jewellery kaali padne se darti hain? Mera yeh necklace dekhiye!"
                 ),
-                spoken_audio=f"{script.hook} {script.problem_agitation} {script.bridge}",
-                text_overlay="चांदी 2 हफ़्ते में काली क्यों पड़ती है? ❌",
-                camera_motion="Conversational handheld eye-level, gentle punch-in at 2.5s",
+                spoken_audio=f"{script.hook} {script.problem_agitation}",
+                text_overlay="लेयर्ड चांदी काली पड़ने का डर? ❌",
+                camera_motion="Conversational handheld eye-level, gentle punch-in at 2.5s to collarbone",
                 technical_consistency_anchors=(
-                    f"Character Seed: {character.name}_{character.id} | "
-                    f"Lighting: Warm 4500K soft daylight, 35mm f/1.8 lens | "
-                    f"Palette: Warm neutral pastels | Aspect: 9:16 Vertical"
+                    f"Character Seed: {character.name}_{character.id} (maroon bindi, wavy hair) | "
+                    f"Wardrobe: Pastel lilac linen shirt (fixed across both parts) | "
+                    f"Location: Bangalore bedroom vanity (fixed across both parts) | "
+                    f"Product: GCNK-221 3-layer silver necklace only | Aspect: 9:16 Vertical"
                 ),
             ),
             # ─────────────────────────────────────────────────────────────────
-            # PART 2 (9–18 Seconds): THE MECHANISM, PROOF & MARGIN-SAFE OFFER
+            # PART 2 (9–18 Seconds): EXACT SAME SCENE — HALLMARK PROOF & OFFER CTA
             # ─────────────────────────────────────────────────────────────────
             StoryboardScene(
                 scene_number=2,
                 part_number=2,
-                beat_name="Part 2 (9–18s): Unique Mechanism, Proof & Margin-Safe Offer",
+                beat_name="Part 2 (9–18s): 925 Hallmark Proof, Rhodium Shield & Offer CTA",
                 duration_seconds=9.0,
                 keyframe_image_prompt=(
                     f"Photorealistic 8k vertical keyframe (9:16) for Midjourney / Nano Banana / Flux: "
-                    f"Macro product showcase of {product.title}. EXACT MATCH to attached reference product image — do not alter geometry or color. "
-                    f"Razor-sharp focus on the laser-engraved 925 hallmark stamp, gleaming rhodium anti-tarnish coating with a tiny crystal-clear "
-                    f"water droplet beading on the surface. Resting on smooth champagne silk draped over a white marble base. Studio softbox lighting, 9:16."
+                    f"EXACT SAME SCENE CONTINUITY: Same sunlit Bangalore bedroom vanity, same 4500K soft daylight, same woman {character.name} "
+                    f"in the same pastel lilac linen shirt with maroon bindi. "
+                    f"Close-up framing on her collarbone and hand: she gently tilts the {product.title} clasp and pendant towards camera, "
+                    f"revealing the razor-sharp laser-engraved '925' hallmark stamp with high-mirror rhodium anti-tarnish gleam. "
+                    f"The 3 delicate silver chains (lengths 16\", 18\", 20\") lie neatly across her skin without tangling or extra layers. "
+                    f"Shallow depth of field, 85mm f/2.0 portrait macro, ultra-crisp metallic texture, zero AI plastic sheen."
                 ),
                 video_motion_prompt=(
                     f"Google Veo / Flow Image-to-Video prompt: "
-                    f"Animate from Keyframe 2. Camera performs an ultra-smooth macro slow orbit glide across the gleaming 925 silver chains and pendants (0-4s). "
-                    f"Smooth cut at 4.5s to {character.name} ({char_anchor}) wearing the necklace over a clean pastel collar shirt, smiling with radiant confidence "
-                    f"and gesturing warmly to tap below (4.5-9s). Bottom safe-zone animated badge: 'FLAT 60% OFF · ₹{product.sp:.0f}'."
+                    f"Animate from Keyframe 2. MATCHING SCENE CONTINUITY: Camera glides across the sharp '925' hallmark stamp and gleaming silver chains (0-3s), "
+                    f"then tilts smoothly up to {character.name}'s smiling face (3-5s) as she delivers Part 2 dialogue in the same lilac shirt. "
+                    f"Speech completes cleanly at 6.2s. At 7s she gestures warmly down towards the offer badge. "
+                    f"Graphic overlay appears: 'FLAT {product.discount_percent:.0f}% OFF · ₹{product.sp:.0f}'. 24fps cinematic realism."
                 ),
                 visual_prompt=(
-                    f"Google Veo / Flow prompt (Part 2, 9:16 vertical): "
-                    f"MATCHING SCENE CONTINUITY: Seamless transition from Part 1 with identical lighting and color grade. "
-                    f"Extreme macro close-up of {product.title} (STRICT MATCH to attached reference product image — do not redraw). "
-                    f"Pristine gleaming silver shine, sharp laser hallmark 925 engraving visible, water droplet rolling off anti-tarnish rhodium layer. "
-                    f"Cuts smoothly to {character.name} wearing the necklace with a radiant, confident smile against the same warm indoor background."
+                    f"SAME ROOM & OUTFIT CONTINUITY: Close-up on 925 hallmark stamp on Ananya's neck, "
+                    f"tilts to her confident smile in same room, wearing same lilac shirt. "
+                    f"Animated lower-third offer badge: Flat {product.discount_percent:.0f}% OFF · ₹{product.sp:.0f}."
                 ),
                 spoken_audio_hindi=(
-                    f"लेकिन ये है ग्लोक्राफ्ट 925 स्टर्लिंग सिल्वर, जिसपर है 100% रोडियम एंटी-टार्निश शील्ड। "
-                    f"चाहे रोज़ पहनो, चमक हमेशा नई जैसी रहेगी! आज स्पेशल ऑफर में सिर्फ ₹{product.sp:.0f} — नीचे टैप करके अभी मँगवाएँ!"
+                    f"ग्लोक्राफ्ट का 925 स्टर्लिंग सिल्वर, रोडियम शील्ड के साथ! आज सिर्फ ₹{product.sp:.0f} में नीचे आर्डर करें।"
                 ),
                 spoken_audio_hinglish=(
-                    f"Lekin yeh hai GlowCraft 925 sterling silver, jispar hai 100% rhodium anti-tarnish shield. "
-                    f"Chahe roz pehno, chamak hamesha nayi jaisi rahegi! Aaj special offer mein sirf Rs. {product.sp:.0f} — neeche tap karke abhi mangwayein!"
+                    f"GlowCraft ka 925 sterling silver, rhodium shield ke saath! Aaj sirf Rs. {product.sp:.0f} mein neeche order karein."
                 ),
-                spoken_audio=f"{script.promise} {script.mechanism} {script.proof} {script.offer} {script.risk_reversal_cta}",
+                spoken_audio=f"{script.mechanism} {script.offer} {script.risk_reversal_cta}",
                 text_overlay=f"100% Rhodium 925 Silver ✨ • Flat {product.discount_percent:.0f}% Off • सिर्फ ₹{product.sp:.0f} 👇",
-                camera_motion="Macro slow glide orbit across hallmark, transitioning to medium hero smile",
+                camera_motion="Macro punch on 925 hallmark, smooth tilt up to hero smile and tap gesture",
                 technical_consistency_anchors=(
-                    f"Match Part 1 Character Seed: {character.name}_{character.id} | "
-                    f"Product Anchor: Reference product image GCNK-221 geometry locked | "
-                    f"Lighting: 4500K continuous key light | Aspect: 9:16 Vertical"
+                    f"SAME CHARACTER: {character.name}_{character.id} with lilac shirt & maroon bindi | "
+                    f"SAME LOCATION: Bangalore bedroom vanity | "
+                    f"SAME PRODUCT: GCNK-221 (strictly 3 chains, star & moon pendants) | Aspect: 9:16 Vertical"
                 ),
             ),
         ]
