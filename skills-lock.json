@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "human-writing": {
+      "source": "factory-ai/factory-plugins",
+      "sourceType": "github",
+      "skillPath": "plugins/droid-evolved/skills/human-writing/SKILL.md",
+      "computedHash": "ef5a1e8b4ef5bae65612021d5285af2af6cfee07fe7dc79928ee622b06de2682"
+    }
+  }
+}

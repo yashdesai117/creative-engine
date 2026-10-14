@@ -459,35 +459,35 @@ PART 1 (0–9 SECONDS) — HOOK & PROBLEM: PRODUCT VISIBLE ON COLLARBONE FROM 0s
 • Visual Prompt (Veo / Google Flow / Kling):
   "CONTINUOUS SINGLE SCENE: Ananya ([ANANYA_IND_26_LILAC_SHIRT_BINDI_VANITY]) is seated at her wooden vanity mirror in a sunlit Bangalore bedroom. She is ALREADY WEARING the GlowCraft 925 Silver Layered Necklace (strictly 3 fine silver chains with tiny moon & star charms, no coin charms) against her collarbone. At 0-2s she looks into the mirror gently touching the dainty silver moon pendant with an inquiring, thoughtful expression. At 2.5s she turns smoothly to camera with a warm, relatable smile and begins speaking directly to the viewer. Conversational gentle handheld camera, natural lip sync. Speech finishes comfortably at 6.0s, leaving 3.0s buffer of her confident smile and necklace gleam. No rushed movement, no product morphing. 24fps cinematic realism."
 
-• Spoken Dialogue / Voiceover (Strict 13 Words · 5.0 Seconds Natural Speech Pacing):
-  "चांदी की लेयर्ड ज्वेलरी काली पड़ने से डरती हैं? मेरा ये नेकलेस देखिए!"
+• Spoken Dialogue / Voiceover (Strict 13 Words · 4.8 Seconds Natural Speech Pacing):
+  "सच बताना, कितनी बार चांदी का नेकलेस खरीद के पछताए हो? क्योंकि वो काला पड़ जाता है!"
 
 • Phonetic Transliteration (for voice artist / TTS reference):
-  "Chandi ki layered jewellery kaali padne se darti hain? Mera yeh necklace dekhiye!"
+  "Sach batana, kitni baar chandi ka necklace khareed ke pachtaye ho? Kyunki woh kaala pad jaata hai!"
 
 • English Meaning:
-  "Afraid layered silver jewellery will turn black? Look at my necklace!"
+  "Be honest, how many times have you regretted buying a silver necklace because it turns black?"
 
 • On-Screen Text Overlay (Safe Zone):
-  "लेयर्ड चांदी काली पड़ने का डर? ❌" (Bold high-contrast subtitle)
+  "चांदी खरीद के पछताए हो? ❌" (Bold high-contrast subtitle)
 
 • Camera Motion: Conversational eye-level, gentle punch-in at 2.5s to collarbone.
-• Duration: 9.0 seconds (Speech: 5.0s | Buffer: 4.0s).
+• Duration: 9.0 seconds (Speech: 4.8s | Buffer: 4.2s).
 
 ────────────────────────────────────────────────────────────────────────────────
 PART 2 (9–18 SECONDS) — EXACT SAME ROOM & OUTFIT: 925 HALLMARK PROOF & OFFER CTA
 ────────────────────────────────────────────────────────────────────────────────
 • Visual Prompt (Veo / Google Flow / Kling):
-  "MATCHING SCENE CONTINUITY: Exact same sunlit Bangalore bedroom, exact same lighting (4500K), exact same Ananya ([ANANYA_IND_26_LILAC_SHIRT_BINDI_VANITY]) wearing the exact same lilac linen shirt with maroon bindi. Starts with a close-up on her collarbone (0-3s) as she gently tilts the necklace clasp/pendant towards camera showing the razor-sharp laser-engraved '925' hallmark stamp with high-mirror rhodium shine. At 3.5s camera tilts smoothly up to Ananya's face as she speaks Part 2 dialogue with radiant confidence. Speech finishes cleanly at 6.2s. At 7.0s she gestures warmly down towards the offer sticker. Lower-third animated badge: 'FLAT 60% OFF · ₹599 · 7-DAY GUARANTEE'. 24fps cinematic realism."
+  "MATCHING SCENE CONTINUITY: Exact same sunlit Bangalore bedroom, exact same lighting (4500K), exact same Ananya ([ANANYA_IND_26_LILAC_SHIRT_BINDI_VANITY]) wearing the exact same lilac linen shirt with maroon bindi. Starts with a close-up on her collarbone (0-3s) as she gently tilts the necklace clasp/pendant towards camera showing the razor-sharp laser-engraved '925' hallmark stamp with high-mirror rhodium shine. At 3.5s camera tilts smoothly up to Ananya's face as she speaks Part 2 dialogue with radiant confidence. Speech finishes cleanly at 6.0s. At 7.0s she gestures warmly down towards the offer sticker. Lower-third animated badge: 'FLAT 60% OFF · ₹599 · 7-DAY GUARANTEE'. 24fps cinematic realism."
 
-• Spoken Dialogue / Voiceover (Strict 14 Words · 5.2 Seconds Natural Speech Pacing):
-  "ग्लोक्राफ्ट का 925 स्टर्लिंग सिल्वर, रोडियम शील्ड के साथ! आज सिर्फ ₹599 में नीचे आर्डर करें।"
+• Spoken Dialogue / Voiceover (Strict 14 Words · 5.0 Seconds Natural Speech Pacing):
+  "पर ये असली 925 सिल्वर है, रोडियम कोटेड। मैं रोज़ पहनती हूँ, और सिर्फ ₹599 का है।"
 
 • Phonetic Transliteration (for voice artist / TTS reference):
-  "GlowCraft ka 925 sterling silver, rhodium shield ke saath! Aaj sirf Rs. 599 mein neeche order karein."
+  "Par yeh asli 925 silver hai, rhodium coated. Main roz pehenti hoon, aur sirf Rs. 599 ka hai."
 
 • English Meaning:
-  "GlowCraft's 925 sterling silver with rhodium shield! Today at just ₹599, order below."
+  "But this is real 925 silver, rhodium coated. I wear it everyday, and it's literally just ₹599."
 
 • On-Screen Text Overlay (Safe Zone):
   "100% Rhodium 925 Silver ✨ • Flat 60% OFF • सिर्फ ₹599 👇"

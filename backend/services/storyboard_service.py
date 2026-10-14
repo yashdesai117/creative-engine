@@ -44,46 +44,47 @@ class StoryboardService:
         8. Offer (38-42s)
         9. Risk Reversal & CTA (42-45s)
         """
-        # 1. Hindi Voiceover Script (Devanagari) to prevent mispronunciation
-        hindi_hook = "अगर आपकी चांदी की ज्वेलरी भी कुछ ही हफ़्तों में काली पड़ जाती है — तो ये 3 सेकंड ध्यान से सुनिए।"
-        hindi_agitation = f"सस्ती ज्वेलरी ऊपर से चमकती है, लेकिन पसीना लगते ही स्किन पर हरा निशान छोड़ देती है। बार-बार पैसे बर्बाद करने का कोई फायदा नहीं।"
-        hindi_bridge = "ज़्यादातर लोग सोचते हैं कि उनकी स्किन में कमी है, लेकिन असली सच ये है कि बाज़ार में ब्रास पर सिर्फ पतली पॉलिश की जाती है।"
-        hindi_promise = f"लेकिन {product.title} के साथ ऐसा कभी नहीं होगा — चाहे आप इसे रोज़ पहनें।"
-        hindi_mechanism = "इसका सीक्रेट है असली 925 स्टर्लिंग सिल्वर बेस और 100% रोडियम एंटी-टार्निश शील्ड, जो कभी काली नहीं पड़ती।"
-        hindi_objection_proof = "हज़ारों भारतीय महिलाओं ने इसे आज़माया है और 4.8 स्टार रेटिंग दी है — 100% स्किन-फ्रेंडली और हाइपोएलर्जेनिक।"
-        hindi_offer_cta = f"आज स्पेशल ऑफर में पाइए फ्लैट {product.discount_percent:.0f}% की छूट, सिर्फ ₹{product.sp:.0f} में! 7-दिन की आसान एक्सचेंज गारंटी के साथ। अभी नीचे दिए गए लिंक पर टैप करें!"
+        # 1. Hindi Voiceover Script (Devanagari) — Human-Writing Standard
+        # Conversational, personal, honest reactions — zero promotional AI slop
+        hindi_hook = "सच बताना, कितनी बार चांदी का नेकलेस खरीद के पछताए हो? क्योंकि वो काला पड़ जाता है!"
+        hindi_agitation = "पसीना लगते ही स्किन हरी हो जाती है और चमक गायब। फिर वो सिर्फ बॉक्स में पड़ा रहता है।"
+        hindi_bridge = "गलती आपकी नहीं है — बाज़ार में सस्ती ब्रास मेटल पर चांदी की पतली पॉलिश चिपका देते हैं।"
+        hindi_promise = f"लेकिन {product.title} के साथ ऐसा बिल्कुल नहीं होता। मैं खुद इसे महीनों से पहन रही हूँ।"
+        hindi_mechanism = "इसका बेस असली 925 स्टर्लिंग सिल्वर है, जिसपर रोडियम की कोटिंग है जो कभी काली नहीं पड़ती।"
+        hindi_objection_proof = "चाहे वर्कआउट हो या ऑफिस, स्किन पर कोई रैश नहीं होता। 12 हज़ार से ज़्यादा लड़कियाँ इसे पहन रही हैं।"
+        hindi_offer_cta = f"वेबसाइट पर अभी फ्लैट {product.discount_percent:.0f}% ऑफ है, सिर्फ ₹{product.sp:.0f} में। 7 दिन की एक्सचेंज गारंटी भी है — लिंक नीचे है!"
 
         full_hindi = f"{hindi_hook} {hindi_agitation} {hindi_bridge} {hindi_promise} {hindi_mechanism} {hindi_objection_proof} {hindi_offer_cta}"
 
-        # English / Andromeda transcript reference
+        # English / Andromeda transcript reference (humanized)
         hook_audio = (
             summary.hook_layers.audio
             if summary.hook_layers and summary.hook_layers.audio
-            else summary.hook_line
+            else "Honestly, how many times have you regretted buying a silver necklace because it turns black?"
         )
 
         problem_text = (
-            f"If you're dealing with {candidate.problem.lower()}, cheap jewellery oxidises and stains your skin green within weeks."
+            f"If you're dealing with {candidate.problem.lower()}, cheap jewellery tarnishes and leaves ugly green marks on your skin."
         )
 
         bridge_text = (
             summary.bridge
             if summary.bridge
-            else "Most brands use cheap brass alloys that fade instantly. But here is the real secret."
+            else "It's not your skin's fault — most brands just wash thin silver over cheap brass."
         )
 
         promise_text = (
-            f"With {product.title}, you get lasting everyday shine without tarnishing or skin irritation."
+            f"I wear {product.title} everyday, and it looks just as shiny as day one."
         )
 
         mechanism_text = (
-            "Authentic 925 sterling silver hallmarked core sealed with a 100% rhodium anti-tarnish protective shield."
+            "Pure 925 sterling silver hallmarked core, sealed with anti-tarnish rhodium plating."
         )
 
-        objection_text = "Verified 100% hypoallergenic and nickel-free, thoroughly tested for sensitive skin."
-        proof_text = "Over 12,000+ verified 5-star customer reviews across India."
-        offer_text = f"Flat {product.discount_percent:.0f}% off today at ₹{product.sp:.0f} with premium gift box packaging."
-        risk_cta_text = "7-day risk-free exchange guarantee. Tap below to order yours before limited stock ends!"
+        objection_text = "Completely hypoallergenic and nickel-free, even for super sensitive skin."
+        proof_text = "Over 12,000+ verified customer reviews across India."
+        offer_text = f"Flat {product.discount_percent:.0f}% off today at ₹{product.sp:.0f} with premium gift box."
+        risk_cta_text = "7-day risk-free exchange guarantee. Tap below to grab yours!"
 
         return NineBeatScript(
             hook=hook_audio,
@@ -146,10 +147,10 @@ class StoryboardService:
                     f"Turns to camera and gestures to the necklace on her neck. Warm natural lighting, 9:16 vertical."
                 ),
                 spoken_audio_hindi=(
-                    "चांदी की लेयर्ड ज्वेलरी काली पड़ने से डरती हैं? मेरा ये नेकलेस देखिए!"
+                    "सच बताना, कितनी बार चांदी का नेकलेस खरीद के पछताए हो? क्योंकि वो काला पड़ जाता है!"
                 ),
                 spoken_audio_hinglish=(
-                    "Chandi ki layered jewellery kaali padne se darti hain? Mera yeh necklace dekhiye!"
+                    "Sach batana, kitni baar chandi ka necklace khareed ke pachtaye ho? Kyunki woh kaala pad jaata hai!"
                 ),
                 spoken_audio=f"{script.hook} {script.problem_agitation}",
                 text_overlay="लेयर्ड चांदी काली पड़ने का डर? ❌",
@@ -191,10 +192,10 @@ class StoryboardService:
                     f"Animated lower-third offer badge: Flat {product.discount_percent:.0f}% OFF · ₹{product.sp:.0f}."
                 ),
                 spoken_audio_hindi=(
-                    f"ग्लोक्राफ्ट का 925 स्टर्लिंग सिल्वर, रोडियम शील्ड के साथ! आज सिर्फ ₹{product.sp:.0f} में नीचे आर्डर करें।"
+                    f"पर ये असली 925 सिल्वर है, रोडियम कोटेड। मैं रोज़ पहनती हूँ, और सिर्फ ₹{product.sp:.0f} का है।"
                 ),
                 spoken_audio_hinglish=(
-                    f"GlowCraft ka 925 sterling silver, rhodium shield ke saath! Aaj sirf Rs. {product.sp:.0f} mein neeche order karein."
+                    f"Par yeh asli 925 silver hai, rhodium coated. Main roz pehenti hoon, aur sirf Rs. {product.sp:.0f} ka hai."
                 ),
                 spoken_audio=f"{script.mechanism} {script.offer} {script.risk_reversal_cta}",
                 text_overlay=f"100% Rhodium 925 Silver ✨ • Flat {product.discount_percent:.0f}% Off • सिर्फ ₹{product.sp:.0f} 👇",

@@ -226,8 +226,15 @@ Write a detailed, ready-to-use generation prompt. Be specific about lighting, co
 
     def _step2_system(self) -> str:
         return (
-            "You are an expert copywriter and creative director. You write hooks that stop scrolls in the first 3 seconds. "
-            "Your rationale is strategic, not descriptive. You never pad output with filler."
+            "You are an expert copywriter and creative director adhering strictly to the Human-Writing standard. "
+            "You write spoken hooks and video dialogues that sound like a REAL human talking casually to a friend on FaceTime or Instagram close friends, "
+            "NEVER like an AI, marketing brochure, or scripted TV commercial. "
+            "HUMAN-WRITING PRINCIPLES: "
+            "1. Voice matters: Characters must have opinions, mixed feelings, and authentic first-person perspective ('Honestly, I thought...', 'Sach bataun toh...'). "
+            "2. Ban AI tropes: Cut promotional puffery ('revolutionary', 'stands as a testament', 'pure protective shield', 'game-changer'). "
+            "3. Ban negative parallelisms ('It\\'s not just X, it\\'s Y') and rule-of-three triads. "
+            "4. Conversational Indian Hindi/Hinglish: Never use formal bookish Hindi. Use natural spoken conversational phrasing with everyday loanwords. "
+            "5. Strict dialogue length: 12-14 words max per 8-9s clip (~5 seconds speaking time) so speech is relaxed, natural, and never rushed or cut off."
         )
 
     def _step3_system(self) -> str:
