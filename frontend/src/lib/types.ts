@@ -117,12 +117,18 @@ export interface NineBeatScript {
 
 export interface StoryboardScene {
   sceneNumber: number;
+  partNumber?: number;
   beatName: string;
   durationSeconds: number;
+  keyframeImagePrompt?: string;
+  videoMotionPrompt?: string;
   visualPrompt: string;
+  spokenAudioHindi?: string;
+  spokenAudioHinglish?: string;
   spokenAudio: string;
   textOverlay: string;
   cameraMotion: string;
+  technicalConsistencyAnchors?: string;
   keyframeUrl?: string;
 }
 

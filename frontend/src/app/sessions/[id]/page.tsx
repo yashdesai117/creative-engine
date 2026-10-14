@@ -11,6 +11,7 @@ import {
   MOCK_PROMPT,
   MOCK_BANNER_PROMPT,
   MOCK_VIDEO_PROMPT_2PARTS,
+  MOCK_STORYBOARD_IMAGE_PROMPT,
 } from "@/lib/mock-data";
 import { getRelativeTime, formatCurrency, cn } from "@/lib/utils";
 
@@ -19,8 +20,8 @@ function SessionDetailContent() {
   const id = typeof params?.id === "string" ? params.id : Array.isArray(params?.id) ? params.id[0] : "";
   const session = MOCK_SESSIONS.find((s) => s.id === id);
 
-  const [activePromptTab, setActivePromptTab] = useState<"banner" | "video">(
-    session?.format === "video" ? "video" : "banner"
+  const [activePromptTab, setActivePromptTab] = useState<"banner" | "video" | "storyboard_images">(
+    session?.format === "video" ? "storyboard_images" : "banner"
   );
   const [copied, setCopied] = useState(false);
 
@@ -113,58 +114,93 @@ function SessionDetailContent() {
         )}
 
         {/* Format Selector / Tabs for Specimen Mock Prompts */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
+          <div className="flex items-center gap-2 flex-wrap">
             <span className="text-xs font-semibold text-[rgba(255,255,255,0.6)] uppercase tracking-wider">
-              Specimen Mock Prompts:
+              Specimen Prompts:
             </span>
             <button
-              onClick={() => setActivePromptTab("banner")}
+              onClick={() => setActivePromptTab("storyboard_images")}
               className={cn(
-                "px-3 py-1.5 rounded-lg text-xs font-semibold transition-all",
-                activePromptTab === "banner"
-                  ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/25"
+                "px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5",
+                activePromptTab === "storyboard_images"
+                  ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/25 ring-1 ring-indigo-400/50"
                   : "bg-white/5 text-[rgba(255,255,255,0.6)] hover:bg-white/10"
               )}
             >
-              🖼️ Banner Ad Prompt (1:1 / 4:5)
+              <span>📸</span>
+              <span>1. Storyboard Stills (Generate Image First)</span>
             </button>
             <button
               onClick={() => setActivePromptTab("video")}
               className={cn(
-                "px-3 py-1.5 rounded-lg text-xs font-semibold transition-all",
+                "px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5",
                 activePromptTab === "video"
-                  ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/25"
+                  ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/25 ring-1 ring-indigo-400/50"
                   : "bg-white/5 text-[rgba(255,255,255,0.6)] hover:bg-white/10"
               )}
             >
-              🎬 2-Part Video Prompt (Veo / Flow 8-10s)
+              <span>🎬</span>
+              <span>2. Veo/Flow Video (Max 2 Parts · 8-10s)</span>
+            </button>
+            <button
+              onClick={() => setActivePromptTab("banner")}
+              className={cn(
+                "px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5",
+                activePromptTab === "banner"
+                  ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/25 ring-1 ring-indigo-400/50"
+                  : "bg-white/5 text-[rgba(255,255,255,0.6)] hover:bg-white/10"
+              )}
+            >
+              <span>🖼️</span>
+              <span>Banner Ad (1:1 / 4:5)</span>
             </button>
           </div>
           <span className="text-xs text-indigo-400 font-mono">
-            {activePromptTab === "video" ? "Max 2 Parts · Hindi VO · 9:16" : "Safe Zones · 925 Hallmark · 1:1"}
+            {activePromptTab === "storyboard_images"
+              ? "Midjourney / Flux / Nano Banana · 9:16 Stills"
+              : activePromptTab === "video"
+              ? "Image-to-Video · Hindi VO · 2 Parts (8-10s)"
+              : "Safe Zones · 925 Hallmark · 1:1"}
           </span>
         </div>
 
         {/* Specimen concept card */}
         <div className="glass-card rounded-2xl overflow-hidden mb-8">
-          <div className="px-6 py-5 border-b border-[rgba(99,102,241,0.1)] flex items-center justify-between">
+          <div className="px-6 py-5 border-b border-[rgba(99,102,241,0.1)] flex items-center justify-between flex-wrap gap-4">
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-[10px] font-mono text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded">
-                  {activePromptTab === "video" ? "SPECIMEN VIDEO PROMPT" : "SPECIMEN BANNER PROMPT"}
+                  {activePromptTab === "storyboard_images"
+                    ? "STEP 1: KEYFRAME STILLS PROMPTS"
+                    : activePromptTab === "video"
+                    ? "STEP 2: 2-PART VIDEO ANIMATION PROMPTS"
+                    : "SPECIMEN BANNER AD PROMPT"}
                 </span>
-                <span className="text-[10px] font-medium text-emerald-400">✓ Ready to copy into Veo / Grok / Kling</span>
+                <span className="text-[10px] font-medium text-emerald-400">
+                  {activePromptTab === "storyboard_images"
+                    ? "✓ Generate stills first to lock character & product"
+                    : activePromptTab === "video"
+                    ? "✓ Uses keyframe images as First Frame in Veo/Flow"
+                    : "✓ Andromeda visual hierarchy compliant"}
+                </span>
               </div>
               <p className="text-base font-bold text-white">
-                {activePromptTab === "video"
+                {activePromptTab === "storyboard_images"
+                  ? "Storyboard Image Stills (Keyframe 1: Ananya Hook Still · Keyframe 2: Macro 925 Hallmark Still)"
+                  : activePromptTab === "video"
                   ? "2-Part Indian Creator Reel (0–9s Hook & Bridge + 9–18s Mechanism & Offer)"
                   : "Product Hero & Problem-Solution Square Banner (GlowCraft 925 Silver)"}
               </p>
             </div>
             <button
               onClick={() => {
-                const textToCopy = activePromptTab === "video" ? MOCK_VIDEO_PROMPT_2PARTS : MOCK_BANNER_PROMPT;
+                const textToCopy =
+                  activePromptTab === "storyboard_images"
+                    ? MOCK_STORYBOARD_IMAGE_PROMPT
+                    : activePromptTab === "video"
+                    ? MOCK_VIDEO_PROMPT_2PARTS
+                    : MOCK_BANNER_PROMPT;
                 navigator.clipboard.writeText(textToCopy);
                 setCopied(true);
                 setTimeout(() => setCopied(false), 2000);
@@ -177,7 +213,11 @@ function SessionDetailContent() {
           </div>
           <div className="px-6 py-4">
             <pre className="prompt-textarea min-h-[300px] text-xs font-mono whitespace-pre-wrap leading-relaxed text-[rgba(255,255,255,0.85)] bg-black/40 p-4 rounded-xl border border-white/5 overflow-x-auto">
-              {activePromptTab === "video" ? MOCK_VIDEO_PROMPT_2PARTS : MOCK_BANNER_PROMPT}
+              {activePromptTab === "storyboard_images"
+                ? MOCK_STORYBOARD_IMAGE_PROMPT
+                : activePromptTab === "video"
+                ? MOCK_VIDEO_PROMPT_2PARTS
+                : MOCK_BANNER_PROMPT}
             </pre>
           </div>
         </div>

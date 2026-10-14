@@ -488,4 +488,46 @@ PART 2 (9–18 SECONDS) — UNIQUE MECHANISM, PROOF & MARGIN-SAFE OFFER CTA
 • Duration: 9.0 seconds.
 ================================================================================`;
 
+export const MOCK_STORYBOARD_IMAGE_PROMPT = `================================================================================
+STORYBOARD KEYFRAME IMAGE PROMPTS (FIRST FRAME GENERATION PIPELINE)
+Generate these High-Res Stills FIRST (Midjourney v6.1 / Flux.1 / Nano Banana)
+Then feed each image as "First Frame / Image-to-Video" into Google Veo / Google Flow
+================================================================================
+
+WHY GENERATE STILLS FIRST?
+1. Character Face Consistency: Direct text-to-video causes severe facial distortion & morphing. Generating the keyframe image first locks Ananya's facial structure, skin texture, and styling.
+2. Product Fidelity: Prevents the AI from hallucinating incorrect jewellery geometry. The 3-tier chain and star/moon pendants are locked to the real product reference.
+3. Lighting & Palette Match: Both Part 1 and Part 2 share the exact same 4500K soft daylight and 35mm f/1.8 optical profile.
+
+────────────────────────────────────────────────────────────────────────────────
+KEYFRAME 1 (PART 1 FIRST FRAME STILL — 0.0s START FRAME)
+Engine: Midjourney v6.1 / Flux.1 Schnell / Nano Banana | Aspect Ratio: 9:16 Vertical
+────────────────────────────────────────────────────────────────────────────────
+PROMPT:
+"Photorealistic 8k vertical editorial portrait (9:16) of Ananya, an authentic 26-year-old urban Indian woman with warm wheatish complexion, expressive almond brown eyes, shoulder-length wavy dark brown hair, and natural radiant minimal makeup. She is standing in front of a modern vanity mirror in a sunlit Bangalore apartment with sheer white curtains diffusing soft warm morning daylight (4500K). She is wearing an elegant solid pastel lavender collar shirt. She holds a visibly dull, discolored, tarnished brassy-greenish metal necklace close to her collarbone with a subtle, relatable frustrated frown, looking into the mirror. Authentic Indian skin texture with visible natural pores and fine micro-details, zero plastic wax sheen, subsurface scattering. Shot on 35mm f/1.8 lens, shallow depth of field, delicate creamy background bokeh, cinematic hyper-realistic catalog photography --ar 9:16 --style raw --v 6.1"
+
+NEGATIVE PROMPT:
+"plastic skin, porcelain, 3d render, anime, caucasian, western features, oversaturated, deformed hands, extra fingers, cartoon, blurry, watermark, text, dark underexposed"
+
+HOW TO USE IN VEO / FLOW:
+1. Generate and upscale this image.
+2. Upload this still as the "Starting Frame / Input Image" in Google Veo or Google Flow.
+3. Attach Part 1 Video Motion Prompt: "Camera starts on mirror reflection, slow handheld push-in at 2.5s as Ananya turns directly to camera speaking urgently with natural facial animation."
+
+────────────────────────────────────────────────────────────────────────────────
+KEYFRAME 2 (PART 2 FIRST FRAME STILL — 9.0s START FRAME / MACRO REVEAL)
+Engine: Midjourney v6.1 / Flux.1 Schnell / Nano Banana | Aspect Ratio: 9:16 Vertical
+────────────────────────────────────────────────────────────────────────────────
+PROMPT:
+"Extreme macro commercial product photograph (9:16) of the GlowCraft 925 Silver Layered Necklace Set, STRICT MATCH TO ATTACHED REFERENCE PRODUCT IMAGE. Triple-layer sterling silver chains (16 inch, 18 inch, 20 inch) resting gracefully on folded champagne-cream silk draped over a polished white Italian marble pedestal. Razor-sharp macro focus on the laser-engraved '925' hallmark stamp on the delicate lobster clasp and dainty polished star and moon pendants. Mirror-finish rhodium anti-tarnish coating catching a clean rim light highlight. One tiny, crystal-clear microscopic water droplet beading cleanly on the silver chain link, demonstrating hydrophobic anti-tarnish protection. Studio jewelry softbox lighting, 100mm macro f/2.8 lens, hyper-detailed metallic reflections, zero chromatic aberration, pristine luxury D2C jewelry ad aesthetic --ar 9:16 --style raw --v 6.1"
+
+NEGATIVE PROMPT:
+"yellow gold, brass, fake glitter, low resolution, inaccurate chain geometry, distorted pendants, blurry hallmark, noisy background, cheap props, oversaturated"
+
+HOW TO USE IN VEO / FLOW:
+1. Generate and upscale this image.
+2. Upload this still as the "Starting Frame / Input Image" for Part 2 in Google Veo or Google Flow.
+3. Attach Part 2 Video Motion Prompt: "Ultra-smooth macro orbital glide across hallmark and rhodium gleam (0-4s), cutting smoothly at 4.5s to Ananya wearing the layered necklace smiling radiantly at camera."
+================================================================================`;
+
 export const MOCK_PROMPT = MOCK_BANNER_PROMPT;

@@ -178,7 +178,9 @@ class StoryboardScene(BaseModel):
     part_number: int = Field(default=1, description="Part 1 (Hook & Bridge) or Part 2 (Mechanism & Offer) - max 2 parts")
     beat_name: str
     duration_seconds: float = Field(default=8.0, description="8-10 seconds per part to fit Veo/Google Flow generation limits")
-    visual_prompt: str = Field(..., description="Image/video model prompt anchoring character and product")
+    keyframe_image_prompt: str = Field(..., description="Image generator prompt (Midjourney/Nano Banana/Flux) to generate the initial storyboard keyframe image FIRST")
+    video_motion_prompt: str = Field(..., description="Video generator prompt (Google Veo/Google Flow) to animate the generated keyframe image into video")
+    visual_prompt: str = Field(..., description="Combined visual directive anchoring character and product")
     spoken_audio_hindi: str = Field(..., description="Spoken voiceover written in authentic Hindi (Devanagari script) to avoid mispronunciation")
     spoken_audio_hinglish: Optional[str] = Field(None, description="Phonetic Romanized script for voiceover artists/TTS reference")
     spoken_audio: str = Field(..., description="Spoken dialogue/transcript scanned by Meta Andromeda")

@@ -124,13 +124,25 @@ class StoryboardService:
                 part_number=1,
                 beat_name="Part 1 (0–9s): The 3-Layer Hook & Friction Bridge",
                 duration_seconds=9.0,
+                keyframe_image_prompt=(
+                    f"Photorealistic 8k vertical keyframe (9:16) for Midjourney / Nano Banana / Flux: "
+                    f"Medium portrait of {character.name} ({char_anchor}). "
+                    f"She stands in front of a mirror in a modern sunlit Indian apartment, holding a dull, tarnished green-stained necklace "
+                    f"near her collarbone with a relatable, frustrated expression. Soft 4500K morning daylight, authentic skin texture with natural pores, "
+                    f"35mm f/1.8 lens bokeh, true-to-life non-plastic lighting."
+                ),
+                video_motion_prompt=(
+                    f"Google Veo / Flow Image-to-Video prompt: "
+                    f"Animate from Keyframe 1. {character.name} looks at the tarnished necklace with relatable irritation, "
+                    f"then looks directly into camera at 2s speaking urgently. Conversational subtle handheld camera push-in at 2.5s, "
+                    f"natural facial expressions, realistic micro-movements, 24fps cinematic realism."
+                ),
                 visual_prompt=(
                     f"Google Veo / Flow prompt (Part 1, 9:16 vertical): "
                     f"Cinematic handheld medium shot of {character.name} ({char_anchor}). "
                     f"She holds a dull, tarnished necklace near her collarbone with a relatable, frustrated expression, "
                     f"then gestures in realization as soft warm indoor daylight illuminates the scene. "
-                    f"Natural Indian apartment interior background, subtle 35mm bokeh, smooth conversational camera motion, "
-                    f"photorealistic skin texture, no AI plastic glaze."
+                    f"Natural Indian apartment interior background, subtle 35mm bokeh, smooth conversational camera motion."
                 ),
                 spoken_audio_hindi=(
                     "अगर आपकी चांदी की ज्वेलरी भी कुछ ही हफ़्तों में काली पड़ जाती है और स्किन हरी हो जाती है — "
@@ -157,13 +169,24 @@ class StoryboardService:
                 part_number=2,
                 beat_name="Part 2 (9–18s): Unique Mechanism, Proof & Margin-Safe Offer",
                 duration_seconds=9.0,
+                keyframe_image_prompt=(
+                    f"Photorealistic 8k vertical keyframe (9:16) for Midjourney / Nano Banana / Flux: "
+                    f"Macro product showcase of {product.title}. EXACT MATCH to attached reference product image — do not alter geometry or color. "
+                    f"Razor-sharp focus on the laser-engraved 925 hallmark stamp, gleaming rhodium anti-tarnish coating with a tiny crystal-clear "
+                    f"water droplet beading on the surface. Resting on smooth champagne silk draped over a white marble base. Studio softbox lighting, 9:16."
+                ),
+                video_motion_prompt=(
+                    f"Google Veo / Flow Image-to-Video prompt: "
+                    f"Animate from Keyframe 2. Camera performs an ultra-smooth macro slow orbit glide across the gleaming 925 silver chains and pendants (0-4s). "
+                    f"Smooth cut at 4.5s to {character.name} ({char_anchor}) wearing the necklace over a clean pastel collar shirt, smiling with radiant confidence "
+                    f"and gesturing warmly to tap below (4.5-9s). Bottom safe-zone animated badge: 'FLAT 60% OFF · ₹{product.sp:.0f}'."
+                ),
                 visual_prompt=(
                     f"Google Veo / Flow prompt (Part 2, 9:16 vertical): "
                     f"MATCHING SCENE CONTINUITY: Seamless transition from Part 1 with identical lighting and color grade. "
                     f"Extreme macro close-up of {product.title} (STRICT MATCH to attached reference product image — do not redraw). "
                     f"Pristine gleaming silver shine, sharp laser hallmark 925 engraving visible, water droplet rolling off anti-tarnish rhodium layer. "
-                    f"Cuts smoothly to {character.name} wearing the necklace with a radiant, confident smile against the same warm indoor background. "
-                    f"Bottom safe-zone animated badge: 'FLAT 60% OFF · ₹{product.sp:.0f}'."
+                    f"Cuts smoothly to {character.name} wearing the necklace with a radiant, confident smile against the same warm indoor background."
                 ),
                 spoken_audio_hindi=(
                     f"लेकिन ये है ग्लोक्राफ्ट 925 स्टर्लिंग सिल्वर, जिसपर है 100% रोडियम एंटी-टार्निश शील्ड। "
