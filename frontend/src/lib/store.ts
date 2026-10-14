@@ -60,7 +60,9 @@ export const useSessionStore = create<SessionFlowState>()((set, get) => ({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             sellerId: inputForm.sellerId,
+            seller_id: inputForm.sellerId,
             productLink: inputForm.productLink,
+            product_link: inputForm.productLink,
             format: inputForm.format,
           }),
         });
@@ -73,36 +75,48 @@ export const useSessionStore = create<SessionFlowState>()((set, get) => ({
               : undefined;
 
           resolvedProduct = {
-            sellerId: data.seller_id || inputForm.sellerId,
+            sellerId: data.seller_id || data.sellerId || inputForm.sellerId,
             productLink: inputForm.productLink,
-            productId: data.product_id || "PROD-001",
+            productId: data.product_id || data.productId || "PROD-001",
             title: data.title || "ShopDeck Product",
             description: data.description || "",
             category: data.category || "General",
             sp: Number(data.sp) || 0,
             mrp: Number(data.mrp) || Number(data.sp) || 0,
             cp: data.cp ? Number(data.cp) : undefined,
-            discountPercent: Number(data.discount_percent) || 0,
+            discountPercent: Number(data.discount_percent ?? data.discountPercent) || 0,
             marginPercent,
             images: Array.isArray(data.images) ? data.images : [],
             referenceImages: Array.isArray(data.images)
               ? data.images.map((img: { url: string }) => img.url)
               : [],
             variant: data.variant || undefined,
-            isInStock: Boolean(data.is_in_stock ?? true),
-            isPublished: Boolean(data.is_published ?? true),
-            fieldSources: data.field_sources || {
+            isInStock: Boolean(data.is_in_stock ?? data.isInStock ?? true),
+            isPublished: Boolean(data.is_published ?? data.isPublished ?? true),
+            fieldSources: data.field_sources || data.fieldSources || {
               title: "database",
               sp: "database",
               mrp: "database",
               category: "database",
             },
-            fetchedAt: data.fetched_at || new Date().toISOString(),
+            fetchedAt: data.fetched_at || data.fetchedAt || new Date().toISOString(),
           };
         } else {
           const errData = await response.json().catch(() => ({}));
+          let errMsg: string = errData.error || errData.message || "";
+          if (!errMsg && errData.detail) {
+            if (typeof errData.detail === "string") {
+              errMsg = errData.detail;
+            } else if (Array.isArray(errData.detail)) {
+              errMsg = errData.detail
+                .map((d: any) => `${d.loc ? d.loc.slice(1).join(".") + ": " : ""}${d.msg || JSON.stringify(d)}`)
+                .join("; ");
+            } else {
+              errMsg = JSON.stringify(errData.detail);
+            }
+          }
           throw new Error(
-            errData.error || `Product not found in Metabase catalog (HTTP ${response.status})`
+            errMsg || `Product not found in Metabase catalog (HTTP ${response.status})`
           );
         }
       } catch (apiErr: unknown) {

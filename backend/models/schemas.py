@@ -3,7 +3,7 @@ Pydantic schemas for the Creative Engine API.
 All AI outputs are schema-validated. CP never appears in response schemas.
 """
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 from typing import Optional, Literal, Any
 from datetime import datetime
 from enum import Enum
@@ -41,9 +41,34 @@ class FieldSource(str, Enum):
 # ─── Product Schemas ──────────────────────────────────────────────────────────
 
 class ProductResolveRequest(BaseModel):
-    seller_id: str = Field(..., min_length=2, max_length=50)
-    product_link: str = Field(..., min_length=10)
-    format: Format
+    seller_id: str = Field(default="", description="Seller ID or identifier")
+    product_link: str = Field(..., min_length=3, description="Product URL or catalogue path")
+    format: Format = Field(default=Format.video, description="Format: video or banner")
+
+    model_config = {
+        "populate_by_name": True,
+        "extra": "ignore",
+    }
+
+    @model_validator(mode="before")
+    @classmethod
+    def normalize_fields(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            seller = data.get("seller_id") or data.get("sellerId") or ""
+            link = data.get("product_link") or data.get("productLink") or ""
+            fmt = data.get("format") or "video"
+            if isinstance(fmt, str):
+                fmt = fmt.lower().strip()
+                if fmt not in ("video", "banner"):
+                    fmt = "video"
+            return {
+                **data,
+                "seller_id": str(seller).strip(),
+                "product_link": str(link).strip(),
+                "format": fmt,
+            }
+        return data
+
 
 
 class ProductImage(BaseModel):
@@ -115,9 +140,33 @@ class TemplateResponse(BaseModel):
 # ─── Session Schemas ──────────────────────────────────────────────────────────
 
 class SessionCreateRequest(BaseModel):
-    seller_id: str
-    product_link: str
-    format: Format
+    seller_id: str = Field(default="", description="Seller ID")
+    product_link: str = Field(default="", description="Product URL")
+    format: Format = Field(default=Format.video, description="Format: video or banner")
+
+    model_config = {
+        "populate_by_name": True,
+        "extra": "ignore",
+    }
+
+    @model_validator(mode="before")
+    @classmethod
+    def normalize_fields(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            seller = data.get("seller_id") or data.get("sellerId") or ""
+            link = data.get("product_link") or data.get("productLink") or ""
+            fmt = data.get("format") or "video"
+            if isinstance(fmt, str):
+                fmt = fmt.lower().strip()
+                if fmt not in ("video", "banner"):
+                    fmt = "video"
+            return {
+                **data,
+                "seller_id": str(seller).strip(),
+                "product_link": str(link).strip(),
+                "format": fmt,
+            }
+        return data
 
 
 class SessionResponse(BaseModel):
@@ -132,7 +181,21 @@ class SessionResponse(BaseModel):
 
 
 class TemplateSelectionRequest(BaseModel):
-    template_ids: list[str] = Field(..., min_length=1)
+    template_ids: list[str] = Field(default_factory=list)
+
+    model_config = {
+        "populate_by_name": True,
+        "extra": "ignore",
+    }
+
+    @model_validator(mode="before")
+    @classmethod
+    def normalize_fields(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            tids = data.get("template_ids") or data.get("templateIds") or []
+            return {**data, "template_ids": tids}
+        return data
+
 
 
 # ─── Option Schemas ───────────────────────────────────────────────────────────
@@ -267,7 +330,21 @@ class GenerationStreamChunk(BaseModel):
 # ─── Concept Schemas ──────────────────────────────────────────────────────────
 
 class ApprovalRequest(BaseModel):
-    option_ids: list[str] = Field(..., min_length=1)
+    option_ids: list[str] = Field(default_factory=list)
+
+    model_config = {
+        "populate_by_name": True,
+        "extra": "ignore",
+    }
+
+    @model_validator(mode="before")
+    @classmethod
+    def normalize_fields(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            oids = data.get("option_ids") or data.get("optionIds") or []
+            return {**data, "option_ids": oids}
+        return data
+
 
 
 class ConceptResponse(BaseModel):
