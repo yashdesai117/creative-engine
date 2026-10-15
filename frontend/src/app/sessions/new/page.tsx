@@ -10,6 +10,7 @@ import { TemplateStep } from "@/components/session/TemplateStep";
 import { GeneratingStep } from "@/components/session/GeneratingStep";
 import { ReviewStep } from "@/components/session/ReviewStep";
 import { OutputStep } from "@/components/session/OutputStep";
+import { ApiKeyButton } from "@/components/modals/ApiKeyModal";
 
 const STEPS = [
   { label: "Inputs",    desc: "Seller ID and product link" },
@@ -143,26 +144,36 @@ export default function NewSessionPage() {
 
         {/* Footer */}
         <div
-          className="px-5 py-4 shrink-0"
+          className="px-5 py-4 shrink-0 space-y-3"
           style={{ borderTop: "1px solid var(--border-faint)" }}
         >
-          <p className="text-[11px]" style={{ color: "var(--text-4)" }}>
-            Step {currentStep + 1} of {STEPS.length}
-          </p>
-          <div
-            className="step-progress-track mt-2"
-            style={{ background: "var(--border-subtle)" }}
-          >
+          <div className="flex justify-start">
+            <ApiKeyButton />
+          </div>
+          <div>
+            <p className="text-[11px]" style={{ color: "var(--text-4)" }}>
+              Step {currentStep + 1} of {STEPS.length}
+            </p>
             <div
-              className="step-progress-fill transition-all duration-500"
-              style={{ width: `${((currentStep + 1) / STEPS.length) * 100}%`, height: "2px", background: "var(--violet-500)", borderRadius: "2px" }}
-            />
+              className="step-progress-track mt-2"
+              style={{ background: "var(--border-subtle)" }}
+            >
+              <div
+                className="step-progress-fill transition-all duration-500"
+                style={{ width: `${((currentStep + 1) / STEPS.length) * 100}%`, height: "2px", background: "var(--violet-500)", borderRadius: "2px" }}
+              />
+            </div>
           </div>
         </div>
       </aside>
 
       {/* ── Right Content ── */}
       <div className="flex-1 flex flex-col min-w-0">
+
+        {/* Desktop top bar with API Key config */}
+        <div className="hidden lg:flex items-center justify-end px-8 py-3 shrink-0" style={{ borderBottom: "1px solid var(--border-subtle)" }}>
+          <ApiKeyButton />
+        </div>
 
         {/* Mobile top nav */}
         <header
@@ -185,9 +196,12 @@ export default function NewSessionPage() {
                 {STEPS[currentStep].label}
               </span>
             </div>
-            <span className="font-mono-ui text-[11px]" style={{ color: "var(--text-4)" }}>
-              {currentStep + 1} / {STEPS.length}
-            </span>
+            <div className="flex items-center gap-2">
+              <ApiKeyButton />
+              <span className="font-mono-ui text-[11px]" style={{ color: "var(--text-4)" }}>
+                {currentStep + 1} / {STEPS.length}
+              </span>
+            </div>
           </div>
 
           {/* Mobile progress bar */}

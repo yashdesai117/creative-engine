@@ -17,6 +17,7 @@ import {
   ChevronDown,
   ChevronUp,
   AlertCircle,
+  RotateCw,
 } from "lucide-react";
 import Link from "next/link";
 import { useSessionStore } from "@/lib/store";
@@ -83,6 +84,15 @@ export function OutputStep() {
             </p>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
+            <button
+              onClick={() => generatePrompts()}
+              disabled={isGeneratingPrompts}
+              className="flex items-center gap-1.5 px-3 py-2 bg-[rgba(30,30,48,0.6)] border border-[rgba(99,102,241,0.2)] hover:border-[rgba(99,102,241,0.35)] text-[rgba(255,255,255,0.8)] hover:text-white rounded-xl text-xs font-medium transition-all disabled:opacity-40"
+              title="Regenerate prompts using current active AI key"
+            >
+              <RotateCw className={`w-3.5 h-3.5 ${isGeneratingPrompts ? "animate-spin text-indigo-400" : ""}`} />
+              {isGeneratingPrompts ? "Generating..." : "Regenerate Prompts"}
+            </button>
             <button
               onClick={handleExportCSV}
               className="flex items-center gap-1.5 px-3 py-2 bg-[rgba(30,30,48,0.6)] border border-[rgba(99,102,241,0.2)] hover:border-[rgba(99,102,241,0.35)] text-[rgba(255,255,255,0.6)] hover:text-white rounded-xl text-xs font-medium transition-all"

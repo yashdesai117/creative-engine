@@ -14,10 +14,12 @@ import {
   Zap,
   LayoutTemplate,
   TrendingUp,
+  Key,
 } from "lucide-react";
 import { MOCK_SESSIONS } from "@/lib/mock-data";
 import { getRelativeTime, cn } from "@/lib/utils";
 import type { Session } from "@/lib/types";
+import { ApiKeyButton, ApiKeyModal } from "@/components/modals/ApiKeyModal";
 
 const STATUS_CONFIG: Record<
   string,
@@ -88,8 +90,10 @@ export default function DashboardPage() {
             <span className="badge badge-violet text-[10px]">v2</span>
           </div>
 
-          {/* User */}
+          {/* User & API Key Settings */}
           <div className="flex items-center gap-3">
+            <ApiKeyButton />
+            <div className="h-4 w-px bg-white/10 hidden sm:block" />
             <div className="text-right hidden sm:block">
               <p className="text-[11px]" style={{ color: "var(--text-4)" }}>ShopDeck Growth</p>
               <p className="text-[13px] font-medium" style={{ color: "var(--text-1)" }}>Yash Desai</p>
@@ -123,16 +127,18 @@ export default function DashboardPage() {
               Turn any product into strategically distinct Meta ad prompts in under 5 minutes.
             </p>
           </div>
-          <Link href="/sessions/new" className="mt-1 flex-shrink-0">
-            <motion.button
-              whileHover={{ scale: 1.015 }}
-              whileTap={{ scale: 0.985 }}
-              className="btn btn-primary"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              New Session
-            </motion.button>
-          </Link>
+          <div className="flex items-center gap-2.5 mt-1 flex-shrink-0">
+            <Link href="/sessions/new">
+              <motion.button
+                whileHover={{ scale: 1.015 }}
+                whileTap={{ scale: 0.985 }}
+                className="btn btn-primary"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                New Session
+              </motion.button>
+            </Link>
+          </div>
         </motion.div>
 
         {/* ── Metrics ── */}

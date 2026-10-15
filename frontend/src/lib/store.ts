@@ -18,6 +18,7 @@ import {
   MOCK_VIDEO_PROMPT_2PARTS,
 } from "@/lib/mock-data";
 import { generateConceptCode, generateAdName, sleep } from "@/lib/utils";
+import { getStoredApiKeys, hasActiveLlmKey } from "@/lib/keys";
 
 const initialInputForm = {
   sellerId: "",
@@ -195,23 +196,83 @@ export const useSessionStore = create<SessionFlowState>()((set, get) => ({
       generationStep: "candidates",
     });
 
-    // Simulate streaming generation
-    await sleep(800);
-    set({ generationProgress: 15 });
-    await sleep(600);
-    set({ generationProgress: 30, generationStep: "candidates" });
-    await sleep(800);
-    set({ generationProgress: 45 });
-    await sleep(700);
-    set({ generationProgress: 60, generationStep: "summaries" });
-    await sleep(600);
-    set({ generationProgress: 75 });
-    await sleep(500);
-    set({ generationProgress: 90 });
-    await sleep(400);
-    set({ generationProgress: 100, generationStep: "done" });
+    const { session } = get();
+    const keys = getStoredApiKeys();
+    const hasKey = Boolean(
+      (keys.defaultProvider === "claude" && keys.claudeKey?.trim()) ||
+      (keys.defaultProvider === "gemini" && keys.geminiKey?.trim()) ||
+      keys.geminiKey?.trim() ||
+      keys.claudeKey?.trim()
+    );
 
+    // If an API key is entered, perform real generation using the user's key
+    if (hasKey && session?.product) {
+      let progressTimer: any;
+      try {
+        set({ generationProgress: 15, generationStep: "candidates" });
+        let currentP = 15;
+        progressTimer = setInterval(() => {
+          currentP = Math.min(currentP + 12, 88);
+          set({
+            generationProgress: currentP,
+            generationStep: currentP > 50 ? "summaries" : "candidates",
+          });
+        }, 500);
+
+        const res = await fetch("/api/llm/generate-options", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            product: session.product,
+            templateIds: session.selectedTemplateIds,
+            format: session.format,
+            keys,
+          }),
+        });
+
+        clearInterval(progressTimer);
+
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error || `LLM generation error (status ${res.status})`);
+        }
+
+        const data = await res.json();
+        if (data.success && Array.isArray(data.options) && data.options.length > 0) {
+          set({ generationProgress: 100, generationStep: "done" });
+          await sleep(350);
+          set((state) => ({
+            isGenerating: false,
+            generationStep: null,
+            currentStep: 4,
+            session: state.session
+              ? {
+                  ...state.session,
+                  status: "reviewing",
+                  options: data.options,
+                }
+              : null,
+          }));
+          return;
+        }
+      } catch (err: any) {
+        if (progressTimer) clearInterval(progressTimer);
+        console.warn("Live LLM options generation failed, using specimens:", err.message);
+      }
+    }
+
+    // Default specimen generation simulation
+    await sleep(600);
+    set({ generationProgress: 20 });
+    await sleep(500);
+    set({ generationProgress: 40, generationStep: "candidates" });
+    await sleep(500);
+    set({ generationProgress: 65, generationStep: "summaries" });
+    await sleep(400);
+    set({ generationProgress: 85 });
     await sleep(300);
+    set({ generationProgress: 100, generationStep: "done" });
+    await sleep(250);
 
     set((state) => ({
       isGenerating: false,
@@ -352,11 +413,62 @@ export const useSessionStore = create<SessionFlowState>()((set, get) => ({
 
   generatePrompts: async () => {
     set({ isGeneratingPrompts: true });
-    await sleep(2500);
 
     const { session } = get();
     const isVideo = session?.format === "video";
     const baseMock = isVideo ? MOCK_VIDEO_PROMPT_2PARTS : MOCK_BANNER_PROMPT;
+
+    const keys = getStoredApiKeys();
+    const hasKey = Boolean(
+      (keys.defaultProvider === "claude" && keys.claudeKey?.trim()) ||
+      (keys.defaultProvider === "gemini" && keys.geminiKey?.trim()) ||
+      keys.geminiKey?.trim() ||
+      keys.claudeKey?.trim()
+    );
+
+    if (hasKey && session?.product && session?.concepts?.length > 0) {
+      try {
+        const res = await fetch("/api/llm/generate-prompts", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            product: session.product,
+            concepts: session.concepts,
+            format: session.format,
+            keys,
+          }),
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && Array.isArray(data.prompts)) {
+            const promptMap = new Map<string, string>();
+            data.prompts.forEach((p: { conceptId: string; finalPrompt: string }) => {
+              promptMap.set(p.conceptId, p.finalPrompt);
+            });
+
+            set((state) => ({
+              isGeneratingPrompts: false,
+              session: state.session
+                ? {
+                    ...state.session,
+                    concepts: state.session.concepts.map((c) => ({
+                      ...c,
+                      finalPrompt: promptMap.get(c.id) || c.finalPrompt || baseMock,
+                      status: "approved",
+                    })),
+                  }
+                : null,
+            }));
+            return;
+          }
+        }
+      } catch (err: any) {
+        console.warn("Live prompt generation failed, falling back to specimens:", err.message);
+      }
+    }
+
+    await sleep(2000);
 
     set((state) => ({
       isGeneratingPrompts: false,

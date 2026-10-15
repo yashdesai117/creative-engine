@@ -14,6 +14,7 @@ import {
   MOCK_STORYBOARD_IMAGE_PROMPT,
 } from "@/lib/mock-data";
 import { getRelativeTime, formatCurrency, cn } from "@/lib/utils";
+import { ApiKeyButton } from "@/components/modals/ApiKeyModal";
 
 function SessionDetailContent() {
   const params = useParams();
@@ -62,6 +63,7 @@ function SessionDetailContent() {
             </div>
           </div>
           <div className="flex items-center gap-3">
+            <ApiKeyButton />
             <span className="text-xs text-[rgba(255,255,255,0.35)] hidden sm:block">
               {getRelativeTime(session.updatedAt)}
             </span>

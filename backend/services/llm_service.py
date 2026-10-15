@@ -22,12 +22,13 @@ log = structlog.get_logger()
 class LLMService:
     """
     Provider-agnostic LLM wrapper.
-    Currently supports: anthropic (claude), openai (gpt-4o).
+    Currently supports: gemini (Google Gemini), anthropic (claude), openai (gpt-4o).
     """
 
-    def __init__(self, provider: Optional[str] = None, model: Optional[str] = None):
+    def __init__(self, provider: Optional[str] = None, model: Optional[str] = None, api_key: Optional[str] = None):
         self.provider = provider or settings.DEFAULT_LLM_PROVIDER
-        self.model = model or settings.DEFAULT_MODEL
+        self.model = model or ("gemini-2.0-flash" if self.provider == "gemini" else settings.DEFAULT_MODEL)
+        self.api_key = api_key
 
     async def generate_option_candidates(
         self,
@@ -247,16 +248,24 @@ Write a detailed, ready-to-use generation prompt. Be specific about lighting, co
     # ─── API calls ───────────────────────────────────────────────────────────
 
     async def _call(self, prompt: str, system: str) -> str:
-        if self.provider == "anthropic":
-            if not settings.ANTHROPIC_API_KEY:
+        if self.provider == "gemini":
+            key = self.api_key or getattr(settings, "GEMINI_API_KEY", None)
+            if not key:
+                log.info("GEMINI_API_KEY not configured, using fallback generation")
+                return self._fallback_response(prompt)
+            return await self._call_gemini(prompt, system, key)
+        elif self.provider == "anthropic":
+            key = self.api_key or settings.ANTHROPIC_API_KEY
+            if not key:
                 log.info("ANTHROPIC_API_KEY not configured, using fallback generation")
                 return self._fallback_response(prompt)
-            return await self._call_anthropic(prompt, system)
+            return await self._call_anthropic(prompt, system, key)
         elif self.provider == "openai":
-            if not settings.OPENAI_API_KEY:
+            key = self.api_key or settings.OPENAI_API_KEY
+            if not key:
                 log.info("OPENAI_API_KEY not configured, using fallback generation")
                 return self._fallback_response(prompt)
-            return await self._call_openai(prompt, system)
+            return await self._call_openai(prompt, system, key)
         else:
             return self._fallback_response(prompt)
 
@@ -403,10 +412,31 @@ Write a detailed, ready-to-use generation prompt. Be specific about lighting, co
         else:
             return "Production-ready photorealistic product ad visual featuring authentic product dimensions and pristine lighting."
 
-    async def _call_anthropic(self, prompt: str, system: str) -> str:
+    async def _call_gemini(self, prompt: str, system: str, api_key: str) -> str:
+        import httpx
+
+        model = self.model or "gemini-2.0-flash"
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
+        payload = {
+            "systemInstruction": {"parts": [{"text": system}]},
+            "contents": [{"role": "user", "parts": [{"text": prompt}]}],
+            "generationConfig": {
+                "temperature": 0.7,
+                "maxOutputTokens": 4096,
+                "responseMimeType": "application/json",
+            },
+        }
+        async with httpx.AsyncClient(timeout=45.0) as client:
+            resp = await client.post(url, json=payload)
+            resp.raise_for_status()
+            data = resp.json()
+            return data["candidates"][0]["content"]["parts"][0]["text"]
+
+    async def _call_anthropic(self, prompt: str, system: str, api_key: Optional[str] = None) -> str:
         import anthropic
 
-        client = anthropic.AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY)
+        key = api_key or settings.ANTHROPIC_API_KEY
+        client = anthropic.AsyncAnthropic(api_key=key)
         message = await client.messages.create(
             model=self.model,
             max_tokens=4096,
@@ -415,10 +445,11 @@ Write a detailed, ready-to-use generation prompt. Be specific about lighting, co
         )
         return message.content[0].text
 
-    async def _call_openai(self, prompt: str, system: str) -> str:
+    async def _call_openai(self, prompt: str, system: str, api_key: Optional[str] = None) -> str:
         from openai import AsyncOpenAI
 
-        client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+        key = api_key or settings.OPENAI_API_KEY
+        client = AsyncOpenAI(api_key=key)
         response = await client.chat.completions.create(
             model=self.model,
             messages=[
